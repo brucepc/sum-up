@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+{% block title %}SumUp Test{% endblock %}
+
+{% block body %}
+<h3> SumUp SDK Token Test </h3>
+<ul>
+    <li>Token: {{accessToken.getToken()}}</li>
+    <li>Type: {{accessToken.getType()}}</li>
+    <li>Type: {{accessToken.getExpiration()}}</li>
+    <li>Scope: {{dump(accessToken.getScope())}}</li>
+</ul>
+{% endblock %}
