@@ -8,12 +8,14 @@ use BPCI\SumUp\OAuth\AccessToken;
 use BPCI\SumUp\OAuth\AuthenticationHelper;
 use BPCI\SumUp\Exception\BadRequestException;
 use BPCI\SumUp\Exception\InvalidCheckoutException;
+use BPCI\SumUp\Utils\ResponseWrapper;
 
 
 class Checkout implements CheckoutClientInterface, CheckoutInterface
 {
     const PENDING = 'PENDING';
     const COMPLETED = 'COMPLETED';
+    const FAILED = 'FAILED';
     const ENDPOINT = 'checkouts';
 
     private $id;
@@ -27,28 +29,20 @@ class Checkout implements CheckoutClientInterface, CheckoutInterface
     private $description;
     private $redirectUrl;
 
-    function __construct(
-        number $amount, 
-        string $pay_to_email, 
-        string $checkout_reference,
-        string $currency = '',
-        string $description = '',
-        number $fee_amount = null,
-        string $pay_from_mail = '',
-        string $redirect_url = '',
-        string $id = '',
-        string $status = self::PENDING)
+    function __construct(Array $data = null)
     {
-        $this->setAmount($amount);
-        $this->setPayTo($pay_to_email);
-        $this->setReference($checkout_reference);
-        $this->setCurrency($currency);
-        $this->setDescription($description);
-        $this->setFeeAmount($fee_amount);
-        $this->setPayFrom($pay_from_mail);
-        $this->setId($id);
-        $this->setRedirectUrl($redirect_url);
-        $this->setStatus($status);
+        if($data !== null){
+        $this->setAmount($data['amount']);
+        $this->setPayTo($data['pay_to_email']);
+        $this->setReference($data['checkout_reference']);
+        $this->setCurrency($data['currency']);
+        $this->setDescription($data['description']);
+        $this->setFeeAmount($data['fee_amount']);
+        $this->setPayFrom($data['pay_from_mail']);
+        $this->setId($data['id']);
+        $this->setRedirectUrl($data['redirect_url']);
+        $this->setStatus($data['status']);
+        }
     }
 
     /**
@@ -69,14 +63,8 @@ class Checkout implements CheckoutClientInterface, CheckoutInterface
      */
     static function create(CheckoutInterface $checkout, ContextInterface $context, AccessToken $accessToken = null): CheckoutInterface
     {
-        if($accessToken === null){
-            $accessToken = AuthenticationHelper::getAcessToken($context, self::getScopes());
-        }else{
-            if(!$accessToken->isValid()){
-                $accessToken = AuthenticationHelper::getAcessToken($context, $accessToken->getScope());                
-            }
-        }
-        
+        $accessToken = AuthenticationHelper::getValidToken($accessToken);
+
         if(!$checkout->isValid()){
             throw new InvalidCheckoutException('Ops! Something is wrong with checkout.');
         }
@@ -85,9 +73,21 @@ class Checkout implements CheckoutClientInterface, CheckoutInterface
         $headers = AuthenticationHelper::getHeader($accessToken);
         $body = self::getCheckoutBody($checkout);
         $response = $checkoutClient->post(self::ENDPOINT, $headers, $body);
-        if($response->getCode() === 201){
-            
+
+        if($response->getStatusCode()===409)
+        {
+            $error = $response->json();
+            throw new BadRequestException("{$error['error_code']}: {$error['message']}");
         }
+
+        if($response->isSuccessful())
+        {
+            $wrapper = new ResponseWrapper($response);
+            $wrapper->hydrate($checkout);
+            return $checkout;
+        }
+
+        return null;
     }
 
     /**
@@ -103,6 +103,21 @@ class Checkout implements CheckoutClientInterface, CheckoutInterface
      */
     static function complete(CheckoutInterface $checkout, ContextInterface $context, AccessToken $accessToken = null): CheckoutInterface
     {
+        $accessToken = AuthenticationHelper::getValidToken($accessToken);
+
+        if(!$checkout->isValid()){
+            throw new InvalidCheckoutException('Ops! Something is wrong with checkout.');
+        }
+
+        /* @var GuzzleHttp\Client $client */
+        $client = SumUp::getClient();
+        $headers = AuthenticationHelper::getOAuthHeader($accessToken);
+        $body = self::getCompleteCheckoutBody($checkout);
+        $response = $client->put(self::ENDPOINT.'/'.$checkout->getId(), $headers, $body);
+
+        if($response->getStatusCode()){
+
+        }
 
     }
 

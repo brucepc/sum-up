@@ -1,6 +1,6 @@
 <?php
 
-namespace BPCI\SumUp\SDK\OAuth;
+namespace BPCI\SumUp\OAuth;
 
 use BPCI\SumUp\SDK\ContextInterface;
 use BPCI\SumUp\SDK\OAuth\AccessToken;
@@ -71,18 +71,38 @@ class AuthenticationHelper{
             throw new BadRequestException($message);
         }
 
-        $body = json_decode($response->getBody()->getContents());
+        $body = $response->json();
         $token_params = [
-            $body->{'access_token'}, 
-            $body->{'token_type'},
-            $body->{'expires_in'},
+            $body['access_token'], 
+            $body['token_type'],
+            $body['expires_in'],
         ];
 
-        if(property_exists($body, 'scope')){
-            $token_params[] = $body->{'scope'};
+        if(isset($body['scope'])){
+            $token_params[] = $body['scope'];
         }    
 
         return new AccessToken(...$token_params);
+    }
+
+    /**
+     * If available check token or generate a new token
+     * 
+     * @param Context $context
+     * @param AccessToken $token
+     * 
+     * @return AccessToken
+     */
+    static function getValidToken(ContextInterface $context, AccessToken $token = null): AccessToken
+    {
+        if($accessToken === null){
+            $accessToken = AuthenticationHelper::getAcessToken($context, self::getScopes());
+        }else{
+            if(!$accessToken->isValid()){
+                $accessToken = AuthenticationHelper::getAcessToken($context, $accessToken->getScope());                
+            }
+        }
+        return $accessToken;
     }
 
     static function getOAuthHeader(AccessToken $token): string
