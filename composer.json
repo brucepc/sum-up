@@ -52,7 +52,7 @@
     "extra": [],
     "autoload": {
         "psr-4": {
-            "BPCI\\SumUp\\SDK\\": "src/"
+            "BPCI\\SumUp\\": "src/"
         }
     },
     "autoload-dev": {

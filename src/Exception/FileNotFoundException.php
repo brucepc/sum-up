@@ -1,6 +1,6 @@
 <?php
 
-namespace BPCI\SumUp\SDK\Exception;
+namespace BPCI\SumUp\Exception;
 
 class FileNotFoundException extends \RuntimeException{
     private $path;
@@ -10,7 +10,7 @@ class FileNotFoundException extends \RuntimeException{
         parent::__construct($message, $code, $previous);
     }
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getPath()
     {

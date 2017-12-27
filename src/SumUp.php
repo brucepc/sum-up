@@ -1,21 +1,23 @@
 <?php 
 
-namespace BPCI\SumUp\SDK;
+namespace BPCI\SumUp;
+
+use GuzzleHttp\Client;
+use GuzzleHttp\ClientInterface;
 
 class SumUp {
-    private $context;
-    static function loadContext(string $context)
-    {
+    const VERSION = 'v0.1';
+    const ENTRYPOINT = 'https://api.sumup.com/';
 
-    }
-
-    public function authenticate($context){
-        $client = new \GuzzleHttp\Client([
-            'https://api.sumup.com/'
+    static function getClient(): ClientInterface {
+        return new Client([
+            'base_uri' => self::getEntrypoint(),
+            'timeout' => 2
         ]);
-        $res = $client->request('GET', '/authorize',
-    [
-
-    ]);
     }
+
+    static function getEntrypoint(): string{
+        return self::ENTRYPOINT.self::VERSION;
+    }
+
 }

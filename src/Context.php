@@ -2,7 +2,7 @@
 
 namespace BPCI\SumUp\SDK;
 
-class Context
+class Context implements ContextInterface
 {
     /**
      * Entrypoint to api
@@ -92,7 +92,7 @@ class Context
      * @param string $filePath
      * @return Context
      */
-    public static function loadContextFromFile(string $filePath): Context{
+    public static function loadContextFromFile(string $filePath): ContextInterface{
         if(!file_exists($filePath)){
             throw new Exception\FileNotFoundException('Context file not found: '.$filePath, 404, null, $filePath);
         }
@@ -104,12 +104,30 @@ class Context
             throw new Exception\MalformedJsonException('JSON sintax error.');
         }
 
-        return new Context($context_array);
+        return new self($context_array);
     }
 
-    public function setIndexUri(number $index)
+    public function getContextData(): Array{
+    return [
+        'id' => $this->getId(),
+        'name' => $this->getName(),
+        'client_id' => $this->getClientId(),
+        'client_secret' => $this->getClientSecret(),
+        'application_type' => $this->getApplicationType(),
+        'redirect_uris' => $this->getRedirectUris(),
+        'cors_uris' => $this->getCorsUris()
+        ];
+    }
+    /**
+     * Set Index of URI to use on requests
+     *
+     * @param number $index
+     * @return ContextInterface
+     */
+    public function setIndexUri(number $index): ContextInterface
     {
         $this->uriIndexToUser;
+        return $this;
     }
     
     public function getId()

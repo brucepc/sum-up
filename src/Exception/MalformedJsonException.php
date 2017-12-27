@@ -1,6 +1,6 @@
 <?php
 
-namespace BPCI\SumUp\SDK\Exception;
+namespace BPCI\SumUp\Exception;
 
 class MalformedJsonException extends \RuntimeException
 {}

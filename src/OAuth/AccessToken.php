@@ -23,7 +23,8 @@ class AccessToken
         $this->token = $token;
         $this->type = $type;
         $this->expiration = time() + $expiresIn;
-        if($scope!==null) {
+
+        if($scope !== null) {
             $this->scope = $scope;
         }
     }
@@ -35,7 +36,7 @@ class AccessToken
      */
     function isValid(): bool
     {
-        return time() > $this->expiration;
+        return $this->getToken() !== '' && time() > $this->expiration;
     }
 
     /**

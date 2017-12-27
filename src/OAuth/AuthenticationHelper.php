@@ -2,7 +2,7 @@
 
 namespace BPCI\SumUp\SDK\OAuth;
 
-use BPCI\SumUp\SDK\Context;
+use BPCI\SumUp\SDK\ContextInterface;
 use BPCI\SumUp\SDK\OAuth\AccessToken;
 use BPCI\SumUp\SDK\Exception\BadRequestException;
 use GuzzleHttp\Client;
@@ -18,7 +18,7 @@ class AuthenticationHelper{
      * @param boolean $minimal
      * @return string
      */
-    static function getAuthorizationURL(Context $context, $minimal = true){
+    static function getAuthorizationURL(ContextInterface $context, $minimal = true){
         $queryString = [
             'client_id' => $context->getClientId(),
             'client_secret' => $context->getClientSecret(),
@@ -33,7 +33,7 @@ class AuthenticationHelper{
             ]);
         }
 
-        return $context->getEntrypoint().self::OAUTH_AUTHORIZATION.'?'.http_build_query($queryString);
+        return SumUp::ENTRYPOINT.self::OAUTH_AUTHORIZATION.'?'.http_build_query($queryString);
     }
 
     /**
@@ -44,7 +44,7 @@ class AuthenticationHelper{
      * @return AccessToken
      * @throws BadRequestException
      */
-    static function getAccessToken(Context $context, $scopes = null): AccessToken{
+    static function getAccessToken(ContextInterface $context, Array $scopes = null): AccessToken{
         $formParams = [
             'grant_type' => 'client_credentials',
             'client_id' => $context->getClientId(),
@@ -55,7 +55,7 @@ class AuthenticationHelper{
             $formParams['scope'] = array_join(',', $scopes);
         }
 
-        $client = new Client(['base_uri' => $context->getEntrypoint()]);
+        $client = new Client(['base_uri' => SumUp::ENTRYPOINT]);
 
         $response = $client->request(
             'POST', 
@@ -65,21 +65,30 @@ class AuthenticationHelper{
             ]);
 
         $code = $response->getStatusCode();
-        if($code>=200 && $code < 300)
+        if($code !== 200)
         {
-            $body = json_decode($response->getBody()->getContents());
-            $token_params = [
-                $body->{'access_token'}, 
-                $body->{'token_type'},
-                $body->{'expires_in'},
-            ];
-            if(property_exists($body, 'scope')){
-                $token_params[] = $body->{'scope'};
-            }
-            return new AccessToken(...$token_params);
-        }else{
             $message = " Request code: $code \n Message: ". $response->getReasonPhrase();
             throw new BadRequestException($message);
         }
+
+        $body = json_decode($response->getBody()->getContents());
+        $token_params = [
+            $body->{'access_token'}, 
+            $body->{'token_type'},
+            $body->{'expires_in'},
+        ];
+
+        if(property_exists($body, 'scope')){
+            $token_params[] = $body->{'scope'};
+        }    
+
+        return new AccessToken(...$token_params);
+    }
+
+    static function getOAuthHeader(AccessToken $token): string
+    {
+        return [
+            'authorization' => $token->getType(). ' ' . $token->getToken()
+        ];
     }
 }
