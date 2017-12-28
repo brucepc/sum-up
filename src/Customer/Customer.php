@@ -19,6 +19,13 @@ class Customer implements CustomerInterface
     private $name;
 
     /**
+     * cpf or cnpj of brazilian customer max 14 characters
+     *
+     * @var string
+     */
+    private $cpfCnpj;
+
+    /**
      * Customer phone
      *
      * @var string
@@ -129,6 +136,36 @@ class Customer implements CustomerInterface
         }else{
             $this->address = new Address($address);
         }
+
+        return $this;
+    }
+
+    function isValid():bool
+    {
+        return $this->getName() !== null
+                && $this->getCpfCnpj() !== null;
+    }
+
+    /**
+     * Get cpf or cnpj of brazilian customer max 14 characters
+     *
+     * @return  string
+     */ 
+    public function getCpfCnpj()
+    {
+        return $this->cpfCnpj;
+    }
+
+    /**
+     * Set cpf or cnpj of brazilian customer max 14 characters
+     *
+     * @param  string  $cpfCnpj  cpf or cnpj of brazilian customer max 14 characters
+     *
+     * @return  self
+     */ 
+    public function setCpfCnpj(string $cpfCnpj): self
+    {
+        $this->cpfCnpj = trim($cpfCnpj) === '' ? null : $cpfCnpj;
 
         return $this;
     }

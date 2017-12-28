@@ -91,21 +91,25 @@ class AuthenticationHelper
     /**
      * If available check token or generate a new token
      *
-     * @param Context $context
      * @param AccessToken $token
+     * @param Context $context
+     * @param Array $scopes
      *
      * @return AccessToken
      */
-    public static function getValidToken(ContextInterface $context, AccessToken $token = null): AccessToken
+    public static function getValidToken(AccessToken $token = null, ContextInterface $context, Array $scopes = null): AccessToken
     {
-        if ($accessToken === null) {
-            $accessToken = AuthenticationHelper::getAcessToken($context, self::getScopes());
-        } else {
-            if (!$accessToken->isValid()) {
-                $accessToken = AuthenticationHelper::getAcessToken($context, $accessToken->getScope());
-            }
+        $scopes = $scopes ?? $context->getScopes();
+        if ($token === null) {
+            $token = AuthenticationHelper::getAcessToken($context, $scopes);
         }
-        return $accessToken;
+        
+        if (!$token->isValid()
+          && !array_diff($scopes, $token->getScopes())) {
+            $token = AuthenticationHelper::getAcessToken($context, $scopes);
+        }
+        
+        return $token;
     }
 
     public static function getOAuthHeader(AccessToken $token): string

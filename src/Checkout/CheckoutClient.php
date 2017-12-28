@@ -13,7 +13,7 @@ class CheckoutClient implements CheckoutClientInterface
      */
     public static function create(CheckoutInterface $checkout, ContextInterface $context, AccessToken $accessToken = null): CheckoutInterface
     {
-        $accessToken = AuthenticationHelper::getValidToken($accessToken);
+        $accessToken = AuthenticationHelper::getValidToken($accessToken, self::getScopes());
 
         if (!$checkout->isValid()) {
             throw new InvalidCheckoutException('Ops! Something is wrong with checkout.');
@@ -51,7 +51,7 @@ class CheckoutClient implements CheckoutClientInterface
      */
     public static function complete(CheckoutInterface $checkout, ContextInterface $context, AccessToken $accessToken = null): CheckoutInterface
     {
-        $accessToken = AuthenticationHelper::getValidToken($accessToken);
+        $accessToken = AuthenticationHelper::getValidToken($accessToken, self::getScopes());
 
         if (!$checkout->isValid()) {
             throw new InvalidCheckoutException('Ops! Something is wrong with checkout.');
@@ -143,8 +143,8 @@ class CheckoutClient implements CheckoutClientInterface
                 'payer_name' => $customer->getName(),
                 'payer_address' => $customer->getAddress(),
                 'payer_city' => $customer->getCity(),
-                'payer_state_code' => $customer->getStateCode(),
-                'payer_post_code' => $customer->getPostCode()
+                'payer_state_code' => $customer->getState(),
+                'payer_post_code' => $customer->getPost()
             ],
         ];
     }

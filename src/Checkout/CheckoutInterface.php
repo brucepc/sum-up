@@ -1,37 +1,45 @@
 <?php
 namespace BPCI\SumUp\Checkout;
 
+use BPCI\SumUp\Customer\CustomerInterface;
+use BPCI\SumUp\Customer\Card\CardInterface;
+
+
 interface CheckoutInterface
 {
     function getId(): string;
-    function setId(string $id): CheckoutInterface;
+    function setId(string $id): self;
     function getStatus(): string;
-    function setStatus(string $status): CheckoutInterface;
+    function setStatus(string $status): self;
     function getAmount(): number;
-    function setAmount(number $amount): CheckoutInterface;
+    function setAmount(number $amount): self;
     function getFeeAmount(): number;
-    function setFeeAmount(number $amount): CheckoutInterface;
+    function setFeeAmount(number $amount): self;
     function getCurrency(): string;
-    function setCurrency(string $currency): CheckoutInterface;
+    function setCurrency(string $currency): self;
+    function getCustomer(): CustomerInterface;
+    function setCustomer(CustomerInterface $customer): self;
+    function getCard(): CardInterface;
+    function setCard(CardInterface $card): self;
     function getPayToEmail(): string;
-    function setPayToEmail(string $email): CheckoutInterface;
+    function setPayToEmail(string $email): self;
     function getPayFromEmail(): string;
-    function setPayFromEmail(string $email): CheckoutInterface;
+    function setPayFromEmail(string $email): self;
     function getReference(): string;
-    function setReference(string $reference): CheckoutInterface;
+    function setReference(string $reference): self;
     function getDescription(): string;
-    function setDescription(string $description): CheckoutInterface;
+    function setDescription(string $description): self;
     function getRedirectUrl(): string;
-    function setRedirectUrl(string $url): CheckoutInterface;
+    function setRedirectUrl(string $url): self;
     function getValidUntil():string;
-    function setValidUntil(string $timestamp): CheckoutInterface;
+    function setValidUntil(string $timestamp): self;
     function getTransactionCode(): string;
-    function setTransactionCode(string $code): CheckoutInterface;
+    function setTransactionCode(string $code): self;
     function getTransactionId(): string;
-    function setTransactionId(string $id): CheckoutInterface;
+    function setTransactionId(string $id): self;
     function getTransactions(): Array;
-    function setTransactions(Array $transactions): CheckoutInterface;
+    function setTransactions(Array $transactions): self;
     function getToken(): string;
-    function setToken(string $token): CheckoutInterface;
+    function setToken(string $token): self;
     function isValid(): bool;
 }
