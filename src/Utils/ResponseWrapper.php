@@ -12,6 +12,11 @@ class ResponseWrapper
     private $response;
 
     /**
+     * @var Array $suppressedPaths
+     */
+    private $suppressedPaths;
+
+    /**
      * 
      */
     function __construct(Response $response)
@@ -40,13 +45,28 @@ class ResponseWrapper
         return $data;
     }
 
+    /**
+     * Set path to be suppressed on hydrate action
+     *
+     * @param Array $path
+     * @return self
+     */
+    function setSuppressPaths(string $path, string $path2): self
+    {
+        $this->suppressedPaths = get_func_args();
+        return $this;
+    }
+
     function hydrate(&$object, $data = null)
     {
         if($data === null){
             $data = $this->response->json();
         }
 
-        foreach($data as $prop => $value){
+        $suppressedData = $this->suppressDataPaths($data);
+
+        foreach($suppressedData as $prop => $value)
+        {
             $method = 'set'.replate('_', '', ucwords($prop, '_'));
             if(method_exists($object, $method)){
                 $object->$method($value);
@@ -54,5 +74,18 @@ class ResponseWrapper
                 error_log('BPCI\SumUp Lib Error: Method '.get_class($object).'::'.$method.' does not exists!');
             }
         }
+    }
+
+    private function suppressDataPaths(Array $data)
+    {
+        $suppressedData = [];
+        $suppressedPaths = $this->suppressedPaths;
+        array_map(function($value, $path) use ($suppressedPaths, $suppressedData) {
+            foreach($suppressedPaths as $sPath){
+                $suppressedData[replace($sPath, '', $path)] = $value;
+            }
+        }, $data);
+
+        return $suppressedData;
     }
 }

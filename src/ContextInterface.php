@@ -1,6 +1,6 @@
 <?php
 
-namespace BPCI\SumUp\SDK;
+namespace BPCI\SumUp;
 
 interface ContextInterface
 {

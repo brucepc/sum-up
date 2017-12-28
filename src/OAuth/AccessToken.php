@@ -1,6 +1,6 @@
 <?php
 
-namespace BPCI\SumUp\SDK\OAuth;
+namespace BPCI\SumUp\OAuth;
 
 class AccessToken
 {

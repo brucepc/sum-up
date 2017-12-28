@@ -6,8 +6,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use BPCI\SumUp\SDK\Context;
-use BPCI\SumUp\SDK\OAuth\AuthenticationHelper;
+use BPCI\SumUp\Context;
+use BPCI\SumUp\OAuth\AuthenticationHelper;
 
 class DefaultController extends AbstractController
 {

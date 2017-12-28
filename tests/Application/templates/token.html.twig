@@ -6,7 +6,8 @@
 <ul>
     <li>Token: {{accessToken.getToken()}}</li>
     <li>Type: {{accessToken.getType()}}</li>
-    <li>Type: {{accessToken.getExpiration()}}</li>
+    <li>Expiration: {{accessToken.getExpiration()}}</li>
+    <li>Expiration as Date: {{ accessToken.getExpiration()|date("d/m/Y h:i:s")}}</li>
     <li>Scope: {{dump(accessToken.getScope())}}</li>
 </ul>
 {% endblock %}

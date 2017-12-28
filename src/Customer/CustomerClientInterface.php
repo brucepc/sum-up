@@ -1,7 +1,9 @@
 <?php
-namespace BPCI\SumUp\SDK\Client;
+namespace BPCI\SumUp\Customer;
 
-interface CostumerClientInterface
+use BPCI\SumUp\SumUpClientInterface;
+
+interface CostumerClientInterface extends SumUpClientInterface
 {
-    static function create(Array $customer, ContextInterface $context, AccessToken $accessToken): Array;
+    static function createCustomer(CustomerInterface $customer, ContextInterface $context, AccessToken $accessToken): Array;
 }

@@ -37,6 +37,20 @@ interface CheckoutClientInterface extends SumUpClientInterface
      */
     static public function complete(CheckoutInterface $checkout, ContextInterface $context, AccessToken $accessToken = null): CheckoutInterface;
 
+    /**
+     * Generate body to request a new checkout.
+     *
+     * @param CheckoutInterface $checkout
+     * @return Array
+     */
     static function getCheckoutBody(CheckoutInterface $checkout): Array;
+
+    /**
+     * Generate a body to a complete checkout request.
+     *
+     * @param CheckoutInterface $chekcout
+     * @return Array
+     */
+    static function getCompleteCheckoutBody(CheckoutInterface $chekcout): Array;
 
 }

@@ -2,14 +2,16 @@
 
 namespace BPCI\SumUp\OAuth;
 
-use BPCI\SumUp\SDK\ContextInterface;
-use BPCI\SumUp\SDK\OAuth\AccessToken;
-use BPCI\SumUp\SDK\Exception\BadRequestException;
+use BPCI\SumUp\ContextInterface;
+use BPCI\SumUp\Exception\BadRequestException;
+use BPCI\SumUp\OAuth\AccessToken;
+use BPCI\SumUp\SumUp;
 use GuzzleHttp\Client;
 
-class AuthenticationHelper{
-    const OAUTH_AUTHORIZATION = '/authorize';
-    const OAUTH_TOKEN = '/token';
+class AuthenticationHelper
+{
+    const OAUTH_AUTHORIZATION = 'authorize';
+    const OAUTH_TOKEN = 'token';
 
     /**
      * Generate an url to merchant authorization.
@@ -18,22 +20,23 @@ class AuthenticationHelper{
      * @param boolean $minimal
      * @return string
      */
-    static function getAuthorizationURL(ContextInterface $context, $minimal = true){
+    public static function getAuthorizationURL(ContextInterface $context, $minimal = true)
+    {
         $queryString = [
             'client_id' => $context->getClientId(),
             'client_secret' => $context->getClientSecret(),
             'redirect_uri' => $context->getRedirectUri(),
-            'response_type' => 'code'
+            'response_type' => 'code',
         ];
 
-        if(!$minimal){
+        if (!$minimal) {
             $queryString = array_merge($queryString, [
                 'scope' => $context->getScope(),
                 'state' => $context->getState(),
             ]);
         }
 
-        return SumUp::ENTRYPOINT.self::OAUTH_AUTHORIZATION.'?'.http_build_query($queryString);
+        return SumUp::ENTRYPOINT . self::OAUTH_AUTHORIZATION . '?' . http_build_query($queryString);
     }
 
     /**
@@ -44,71 +47,71 @@ class AuthenticationHelper{
      * @return AccessToken
      * @throws BadRequestException
      */
-    static function getAccessToken(ContextInterface $context, Array $scopes = null): AccessToken{
+    public static function getAccessToken(ContextInterface $context, array $scopes = null): AccessToken
+    {
         $formParams = [
             'grant_type' => 'client_credentials',
             'client_id' => $context->getClientId(),
-            'client_secret' => $context->getClientSecret()
+            'client_secret' => $context->getClientSecret(),
         ];
 
-        if($scopes !== null){
+        if ($scopes !== null) {
             $formParams['scope'] = array_join(',', $scopes);
         }
 
         $client = new Client(['base_uri' => SumUp::ENTRYPOINT]);
 
         $response = $client->request(
-            'POST', 
+            'POST',
             self::OAUTH_TOKEN,
             [
-            'form_params' => $formParams
+                'form_params' => $formParams,
             ]);
 
         $code = $response->getStatusCode();
-        if($code !== 200)
-        {
-            $message = " Request code: $code \n Message: ". $response->getReasonPhrase();
+        if ($code !== 200) {
+            $message = " Request code: $code \n Message: " . $response->getReasonPhrase();
             throw new BadRequestException($message);
         }
 
-        $body = $response->json();
+        $body = json_decode($response->getBody()->getContents(), true);
         $token_params = [
-            $body['access_token'], 
+            $body['access_token'],
             $body['token_type'],
             $body['expires_in'],
         ];
 
-        if(isset($body['scope'])){
+        if (isset($body['scope'])) {
             $token_params[] = $body['scope'];
-        }    
+        }
 
         return new AccessToken(...$token_params);
     }
 
     /**
      * If available check token or generate a new token
-     * 
+     *
      * @param Context $context
      * @param AccessToken $token
-     * 
+     *
      * @return AccessToken
      */
-    static function getValidToken(ContextInterface $context, AccessToken $token = null): AccessToken
+    public static function getValidToken(ContextInterface $context, AccessToken $token = null): AccessToken
     {
-        if($accessToken === null){
+        if ($accessToken === null) {
             $accessToken = AuthenticationHelper::getAcessToken($context, self::getScopes());
-        }else{
-            if(!$accessToken->isValid()){
-                $accessToken = AuthenticationHelper::getAcessToken($context, $accessToken->getScope());                
+        } else {
+            if (!$accessToken->isValid()) {
+                $accessToken = AuthenticationHelper::getAcessToken($context, $accessToken->getScope());
             }
         }
         return $accessToken;
     }
 
-    static function getOAuthHeader(AccessToken $token): string
+    public static function getOAuthHeader(AccessToken $token): string
     {
         return [
-            'authorization' => $token->getType(). ' ' . $token->getToken()
+            'authorization' => $token->getType() . ' ' . $token->getToken(),
         ];
     }
 }

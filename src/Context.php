@@ -1,6 +1,6 @@
 <?php
 
-namespace BPCI\SumUp\SDK;
+namespace BPCI\SumUp;
 
 class Context implements ContextInterface
 {
@@ -75,7 +75,7 @@ class Context implements ContextInterface
      */
     private $corsUris;
 
-    function __construct($context = []){
+    function __construct(Array $context = []){
         $this->id = $context['id'] ?? null;
         $this->name = $context['name'] ?? null;
         $this->clientId = $context['client_id'] ?? null;
