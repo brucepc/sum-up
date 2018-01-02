@@ -12,7 +12,8 @@
     ],
     "require": {
         "php": "^7",
-        "guzzlehttp/guzzle": "^6.3"
+        "guzzlehttp/guzzle": "^6.3",
+        "symfony/form": "^4.0"
     },
     "require-dev": {
         "doctrine/doctrine-bundle": "^1.8",
@@ -49,7 +50,11 @@
         ]
     },
     "prefer-stable": true,
-    "extra": [],
+    "extra": {
+	    "src-dir" : "tests/Application/src",
+	    "config-dir": "tests/Application/config",
+	    "bin-dir": "tests/Application/bin"
+    },
     "autoload": {
         "psr-4": {
             "BPCI\\SumUp\\": "src/"

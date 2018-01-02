@@ -97,25 +97,25 @@ class AuthenticationHelper
      *
      * @return AccessToken
      */
-    public static function getValidToken(AccessToken $token = null, ContextInterface $context, Array $scopes = null): AccessToken
+    public static function getValidToken(AccessToken $token = null, ContextInterface $context = null, Array $scopes = null): AccessToken
     {
-        $scopes = $scopes ?? $context->getScopes();
+        $scopes = $scopes ?? $context->getScope();
         if ($token === null) {
             $token = AuthenticationHelper::getAcessToken($context, $scopes);
         }
         
         if (!$token->isValid()
-          && !array_diff($scopes, $token->getScopes())) {
+          && !array_diff($scopes, $token->getScope())) {
             $token = AuthenticationHelper::getAcessToken($context, $scopes);
         }
         
         return $token;
     }
 
-    public static function getOAuthHeader(AccessToken $token): string
+    public static function getOAuthHeader(AccessToken $token): Array
     {
         return [
-            'authorization' => $token->getType() . ' ' . $token->getToken(),
+            'Authorization' => $token->getType() . ' ' . $token->getToken(),
         ];
     }
 }

@@ -17,7 +17,7 @@ class SumUp {
     }
 
     static function getEntrypoint(): string{
-        return self::ENTRYPOINT.self::VERSION;
+        return self::ENTRYPOINT.self::VERSION.'/';
     }
 
 }

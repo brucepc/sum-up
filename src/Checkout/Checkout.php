@@ -7,6 +7,8 @@ use BPCI\SumUp\Exception\InvalidCheckoutException;
 use BPCI\SumUp\OAuth\AccessToken;
 use BPCI\SumUp\OAuth\AuthenticationHelper;
 use BPCI\SumUp\SumUp;
+use BPCI\SumUp\Customer\CustomerInterface;
+use BPCI\SumUp\Customer\Card\CardInterface;
 use BPCI\SumUp\Utils\ResponseWrapper;
 
 class Checkout implements CheckoutInterface
@@ -22,10 +24,36 @@ class Checkout implements CheckoutInterface
     private $currency;
     private $payTo;
     private $payFromEmail;
-    private $reference;
     private $description;
     private $redirectUrl;
+    /**
+     * Checkout reference
+     *
+     * @var string
+     */
+    private $reference;
 
+    /**
+     * Customer
+     *
+     * @var null|Customer
+     */
+    private $customer;
+
+    /**
+     * Card
+     *
+     * 
+     * @var null|Card
+     */
+    private $card;
+
+
+    /**
+     * checkout constructor
+     *
+     * @param array $data
+     */
     public function __construct(array $data = null) {
         if ($data !== null) {
             $this->setAmount($data['amount']);
@@ -61,7 +89,7 @@ class Checkout implements CheckoutInterface
     /**
      * @inheritDoc
      */
-    public function setId($id): CheckoutInterface {
+    public function setId(string $id): CheckoutInterface {
         $this->id = $id;
         return $this;
     }
@@ -76,7 +104,7 @@ class Checkout implements CheckoutInterface
     /**
      * @inheritDoc
      */
-    public function setStatus($status): CheckoutInterface {
+    public function setStatus(string $status): CheckoutInterface {
         $this->status = $status;
         return $this;
     }
@@ -84,14 +112,14 @@ class Checkout implements CheckoutInterface
     /**
      * @inheritDoc
      */
-    public function getAmount(): number {
+    public function getAmount(): float {
         return $this->amount;
     }
 
     /**
      * @inheritDoc
      */
-    public function setAmount(number $amount): Checkout {
+    public function setAmount(float $amount): CheckoutInterface {
         $this->amount = $amount > 0 ? $amount : null;
         return $this;
     }
@@ -106,7 +134,7 @@ class Checkout implements CheckoutInterface
     /**
      * @inheritDoc
      */
-    public function setCurrency($currency): Checkout {
+    public function setCurrency(string $currency): CheckoutInterface {
         $this->currency = $currency;
         return $this;
     }
@@ -121,7 +149,7 @@ class Checkout implements CheckoutInterface
     /**
      * @inheritDoc
      */
-    public function setPayToEmail($email): Checkout {
+    public function setPayToEmail(string $email): CheckoutInterface {
         $this->payTo = trim($email) === '' ? null : $email;
         return $this;
     }
@@ -136,7 +164,7 @@ class Checkout implements CheckoutInterface
     /**
      * @inheritDoc
      */
-    public function setCheckoutReference($reference): Checkout {
+    public function setCheckoutReference(string $reference): CheckoutInterface {
         $this->reference = trim($reference) === '' ? null : $reference;
         return $this;
     }
@@ -151,7 +179,7 @@ class Checkout implements CheckoutInterface
     /**
      * @inheritDoc
      */
-    public function setDescription($description): Checkout {
+    public function setDescription(string $description): CheckoutInterface {
         $this->description = $description;
         return $this;
     }
@@ -159,14 +187,14 @@ class Checkout implements CheckoutInterface
     /**
      * @inheritDoc
      */
-    public function getFeeAmount(): number {
+    public function getFeeAmount(): float {
         return $this->fee;
     }
 
     /**
      * @inheritDoc
      */
-    public function setFeeAmount(number $fee): CheckoutInterface {
+    public function setFeeAmount(float $fee): CheckoutInterface {
         return $this->fee = $fee;
     }
 
@@ -241,6 +269,78 @@ class Checkout implements CheckoutInterface
 
     function setToken(string $token): CheckoutInterface {
         $this->token = $token;
+        return $this;
+    }
+
+    /**
+     * Get customer
+     *
+     * @return  null|Customer
+     */ 
+    public function getCustomer(): ?CustomerInterface
+    {
+        return $this->customer;
+    }
+
+    /**
+     * Set customer
+     *
+     * @param  null|Customer  $customer  Customer
+     *
+     * @return  self
+     */ 
+    public function setCustomer(CustomerInterface $customer): CheckoutInterface
+    {
+        $this->customer = $customer;
+
+        return $this;
+    }
+
+    /**
+     * Get card
+     *
+     * @return  null|Card
+     */ 
+    public function getCard(): ?CardInterface
+    {
+        return $this->card;
+    }
+
+    /**
+     * Set card
+     *
+     * @param  null|Card  $card 
+     *
+     * @return  self
+     */ 
+    public function setCard(CardInterface $card): CheckoutInterface
+    {
+        $this->card = $card;
+
+        return $this;
+    }
+
+    /**
+     * Get checkout reference
+     *
+     * @return  string
+     */ 
+    public function getReference(): ?string
+    {
+        return $this->reference;
+    }
+
+    /**
+     * Set checkout reference
+     *
+     * @param  string  $reference  Checkout reference
+     *
+     * @return  self
+     */ 
+    public function setReference(string $reference): CheckoutInterface
+    {
+        $this->reference = $reference;
+
         return $this;
     }
 }

@@ -1,12 +1,12 @@
 <?php
 
-namespace BPCI\SumUp\Tests;
+namespace BPCI\SumUp\Tests\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use BPCI\SumUp\Customer\Customer as SumUpCustomer;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\CustomerRepository")
+ * @ORM\Entity(repositoryClass="BPCI\SumUp\Tests\Repository\CustomerRepository")
  */
 class Customer extends SumUpCustomer
 {
@@ -17,7 +17,10 @@ class Customer extends SumUpCustomer
      */
     private $id;
 
-    // add your own fields
+    function __construct()
+    {
+        $this->address = new Address([]);
+    }
 
     /**
      * Get the value of id

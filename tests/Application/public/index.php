@@ -1,6 +1,5 @@
 <?php
 require __DIR__.'/../../../vendor/autoload.php';
-
 use BPCI\SumUp\Tests\Kernel;
 use Symfony\Component\Debug\Debug;
 use Symfony\Component\Dotenv\Dotenv;

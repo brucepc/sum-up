@@ -6,7 +6,7 @@ use BPCI\SumUp\Customer\Card\CardInterface;
 use BPCI\SumUp\ContextInterface;
 use BPCI\SumUp\OAuth\AccessToken;
 
-interface CostumerClientInterface extends SumUpClientInterface
+interface CustomerClientInterface extends SumUpClientInterface
 {
     /**
      * Create a customer and fill the $customer Object with response.
@@ -16,7 +16,7 @@ interface CostumerClientInterface extends SumUpClientInterface
      * @param AccessToken $accessToken
      * @return CustomerInterface
      */
-    static function create(CustomerInterface $customer, ContextInterface $context, AccessToken $accessToken): CustomerInterface;
+    static function create(CustomerInterface $customer, ContextInterface $context, AccessToken $accessToken): ?CustomerInterface;
     
     /**
      * Create a customer card and fill the $card Object with response.
@@ -27,7 +27,7 @@ interface CostumerClientInterface extends SumUpClientInterface
      * @param AccessToken $accessToken
      * @return CardInterface
      */
-    static function createCard(CustomerInterface $customer, CardInterface $card, ContextInterface $context, AccessToken $accessToken): CardInterface;
+    static function createCard(CustomerInterface $customer, CardInterface $card, ContextInterface $context, AccessToken $accessToken): ?CardInterface;
     
     /**
      * Delete a customer card.

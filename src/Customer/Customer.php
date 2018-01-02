@@ -39,12 +39,17 @@ class Customer implements CustomerInterface
      */
     private $address;
 
+    function __construct()
+    {
+        $this->address = new Address([]);
+    }
+
     /**
      * Get customer SumUp ID
      *
      * @return  string
      */ 
-    public function getCustomerId()
+    public function getCustomerId(): ?string
     {
         return $this->customerId;
     }
@@ -56,7 +61,7 @@ class Customer implements CustomerInterface
      *
      * @return  self
      */ 
-    public function setCustomerId(string $customerId)
+    public function setCustomerId(?string $customerId): CustomerInterface
     {
         $this->customerId = $customerId;
 
@@ -68,7 +73,7 @@ class Customer implements CustomerInterface
      *
      * @return  string
      */ 
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -80,7 +85,7 @@ class Customer implements CustomerInterface
      *
      * @return  self
      */ 
-    public function setName(string $name)
+    public function setName(?string $name): CustomerInterface
     {
         $this->name = $name;
 
@@ -92,7 +97,7 @@ class Customer implements CustomerInterface
      *
      * @return  string
      */ 
-    public function getPhone()
+    public function getPhone(): ?string
     {
         return $this->phone;
     }
@@ -104,7 +109,7 @@ class Customer implements CustomerInterface
      *
      * @return  self
      */ 
-    public function setPhone(string $phone)
+    public function setPhone(?string $phone): CustomerInterface
     {
         $this->phone = $phone;
 
@@ -116,7 +121,7 @@ class Customer implements CustomerInterface
      *
      * @return  AddressInterface
      */ 
-    public function getAddress()
+    public function getAddress(): ?AddressInterface
     {
         return $this->address;
     }
@@ -128,7 +133,7 @@ class Customer implements CustomerInterface
      *
      * @return  self
      */ 
-    public function setAddress($address)
+    public function setAddress($address): CustomerInterface
     {
         if($address instanceof AddressInterface)
         {
@@ -151,7 +156,7 @@ class Customer implements CustomerInterface
      *
      * @return  string
      */ 
-    public function getCpfCnpj()
+    public function getCpfCnpj(): ?string
     {
         return $this->cpfCnpj;
     }
@@ -163,7 +168,7 @@ class Customer implements CustomerInterface
      *
      * @return  self
      */ 
-    public function setCpfCnpj(string $cpfCnpj): self
+    public function setCpfCnpj(?string $cpfCnpj): CustomerInterface
     {
         $this->cpfCnpj = trim($cpfCnpj) === '' ? null : $cpfCnpj;
 

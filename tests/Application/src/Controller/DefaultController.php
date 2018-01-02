@@ -6,10 +6,15 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use BPCI\SumUp\Context;
 use BPCI\SumUp\OAuth\AuthenticationHelper;
+use BPCI\SumUp\Customer\CustomerClient;
 use BPCI\SumUp\Tests\Entity\Customer;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
+use BPCI\SumUp\Tests\Entity\Checkout;
+use BPCI\SumUp\Tests\Form\CustomerType;
+use BPCI\SumUp\Tests\Form\CheckoutType;
+use BPCI\SumUp\Exception\BadRequestException;
 
 class DefaultController extends AbstractController
 {
@@ -23,7 +28,8 @@ class DefaultController extends AbstractController
     /**
      * @Route("/")
      */
-    public function index(): Response{
+    public function index(): Response
+    {
         
         $oauthURI = AuthenticationHelper::getAuthorizationURL($this->context);
         return $this->render('index.html.twig', [
@@ -44,14 +50,40 @@ class DefaultController extends AbstractController
     /**
      * @Route("/customer")
      */
-    public function createCustomer(): Response {
+    public function createCustomer(Request $request): Response {
         $customer = new Customer();
+        $form = $this->createForm(CustomerType::class, $customer);
+        $form->add('save', SubmitType::class,[
+            'label' => 'Create Customer'
+        ]);
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid()){
+            $customer = $form->getData();
+            try{
+                $token = AuthenticationHelper::getAccessToken($this->context);
+                $customer = CustomerClient::create($customer, $this->context, $token);
+            } catch(BadRequestException $e) {
+                $response = $e->getResponse();
+                return new Response($response->getBody());
+            }
+        }
 
-        $form = $this->createFormBuilder($customer)
-        ->add('name', TextType::class)
-        ->add('cpfCnpj', TextType::class)
-        ->add('phone', TextType::class)
-        ->add('address', TextType::class);
-        return $this->render('customerForm.html.twig');
+        return $this->render('customerForm.html.twig', [
+            'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/checkout")
+     *
+     * @param Request $request
+     * @return Response
+     */
+    function checkout(Request $request): Response{
+        $checkout = new Checkout();
+        $form = $this->createForm(CheckoutType::class);
+        return $this->render('customerForm.html.twig', [
+            'form' => $form->createView()
+        ]);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace BPCI\SumUp\Customer;
 
-class Address extends AddressInterface
+class Address implements AddressInterface
 {
     /**
      * First address line
@@ -46,14 +46,14 @@ class Address extends AddressInterface
      */
     private $state;
 
-    function __construct($data)
+    function __construct($data = [])
     {
-        $this->setLine1($data['line1']);
-        $this->setLine2($data['line2']);
-        $this->setCountry($data['country']);
-        $this->setPostalCode($data['postal_code']);
-        $this->setCity($data['city']);
-        $this->setState($data['state']);
+        $this->setLine1($data['line1'] ?? null);
+        $this->setLine2($data['line2'] ?? null);
+        $this->setCountry($data['country'] ?? null);
+        $this->setPostalCode($data['postal_code'] ?? null);
+        $this->setCity($data['city'] ?? null);
+        $this->setState($data['state'] ?? null);
     }
 
     /**
@@ -61,7 +61,7 @@ class Address extends AddressInterface
      *
      * @return  string
      */ 
-    public function getLine1()
+    public function getLine1(): ?string
     {
         return $this->line1;
     }
@@ -73,7 +73,7 @@ class Address extends AddressInterface
      *
      * @return  self
      */ 
-    public function setLine1(string $line1)
+    public function setLine1(?string $line1): AddressInterface
     {
         $this->line1 = $line1;
 
@@ -85,7 +85,7 @@ class Address extends AddressInterface
      *
      * @return  string
      */ 
-    public function getLine2()
+    public function getLine2(): ?string
     {
         return $this->line2;
     }
@@ -97,7 +97,7 @@ class Address extends AddressInterface
      *
      * @return  self
      */ 
-    public function setLine2(string $line2)
+    public function setLine2(?string $line2): AddressInterface
     {
         $this->line2 = $line2;
 
@@ -109,7 +109,7 @@ class Address extends AddressInterface
      *
      * @return  string
      */ 
-    public function getCountry()
+    public function getCountry(): ?string
     {
         return $this->country;
     }
@@ -121,7 +121,7 @@ class Address extends AddressInterface
      *
      * @return  self
      */ 
-    public function setCountry(string $country)
+    public function setCountry(?string $country): AddressInterface
     {
         $this->country = $country;
 
@@ -133,7 +133,7 @@ class Address extends AddressInterface
      *
      * @return  string
      */ 
-    public function getPostalCode()
+    public function getPostalCode(): ?string
     {
         return $this->postalCode;
     }
@@ -145,7 +145,7 @@ class Address extends AddressInterface
      *
      * @return  self
      */ 
-    public function setPostalCode(string $postalCode)
+    public function setPostalCode(?string $postalCode): AddressInterface
     {
         $this->postalCode = $postalCode;
 
@@ -157,7 +157,7 @@ class Address extends AddressInterface
      *
      * @return  string
      */ 
-    public function getCity()
+    public function getCity(): ?string
     {
         return $this->city;
     }
@@ -169,7 +169,7 @@ class Address extends AddressInterface
      *
      * @return  self
      */ 
-    public function setCity(string $city)
+    public function setCity(?string $city): AddressInterface
     {
         $this->city = $city;
 
@@ -181,7 +181,7 @@ class Address extends AddressInterface
      *
      * @return  string
      */ 
-    public function getState()
+    public function getState(): ?string
     {
         return $this->state;
     }
@@ -193,7 +193,7 @@ class Address extends AddressInterface
      *
      * @return  self
      */ 
-    public function setState(string $state)
+    public function setState(?string $state): AddressInterface
     {
         $this->state = $state;
 
