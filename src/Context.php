@@ -5,20 +5,6 @@ namespace BPCI\SumUp;
 class Context implements ContextInterface
 {
     /**
-     * Entrypoint to api
-     *
-     * @var string
-     */
-    private $entrypoint = 'https://api.sumup.com';
-
-    /**
-     * API Version
-     *
-     * @var string
-     */
-    private $version = 'v0.1';
-
-    /**
      * Index to use the right uri
      * 
      * @var number
@@ -75,7 +61,8 @@ class Context implements ContextInterface
      */
     private $corsUris;
 
-    function __construct(Array $context = []){
+    function __construct(Array $context = [])
+    {
         $this->id = $context['id'] ?? null;
         $this->name = $context['name'] ?? null;
         $this->clientId = $context['client_id'] ?? null;
@@ -92,7 +79,8 @@ class Context implements ContextInterface
      * @param string $filePath
      * @return Context
      */
-    public static function loadContextFromFile(string $filePath): ContextInterface{
+    public static function loadContextFromFile(string $filePath): ContextInterface
+    {
         if(!file_exists($filePath)){
             throw new Exception\FileNotFoundException('Context file not found: '.$filePath, 404, null, $filePath);
         }
@@ -107,8 +95,14 @@ class Context implements ContextInterface
         return new self($context_array);
     }
 
-    public function getContextData(): Array{
-    return [
+    /**
+     * Get context data as array
+     *
+     * @return Array
+     */
+    public function getContextData(): Array
+    {
+        return [
         'id' => $this->getId(),
         'name' => $this->getName(),
         'client_id' => $this->getClientId(),
@@ -121,12 +115,12 @@ class Context implements ContextInterface
     /**
      * Set Index of URI to use on requests
      *
-     * @param number $index
+     * @param int $index
      * @return ContextInterface
      */
-    public function setIndexUri(number $index): ContextInterface
+    public function setIndexUri(int $index): ContextInterface
     {
-        $this->uriIndexToUser;
+        $this->uriIndexToUse = $index;
         return $this;
     }
     
@@ -170,13 +164,4 @@ class Context implements ContextInterface
         return $this->corsUris;
     }
 
-    public function getAPIVersion()
-    {
-        return $this->version;
-    }
-
-    public function getEntrypoint()
-    {
-        return $this->entrypoint;
-    }
 }

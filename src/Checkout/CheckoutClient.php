@@ -2,6 +2,9 @@
 namespace BPCI\SumUp\Checkout;
 
 use BPCI\SumUp\SumUpClientInterface;
+use BPCI\SumUp\OAuth\AccessToken;
+use BPCI\SumUp\ContextInterface;
+use BPCI\SumUp\OAuth\AuthenticationHelper;
 
 class CheckoutClient implements CheckoutClientInterface
 {

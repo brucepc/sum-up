@@ -2,7 +2,6 @@
 namespace BPCI\SumUp\Utils;
 
 use GuzzleHttp\Psr7\Response;
-use Symfony\Component\DependencyInjection\Tests\Compiler\A;
 
 class ResponseWrapper
 {

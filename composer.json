@@ -26,6 +26,7 @@
         "symfony/maker-bundle": "^1.0",
         "symfony/monolog-bundle": "^3.1",
         "symfony/orm-pack": "^1.0",
+        "symfony/phpunit-bridge": "^4.0",
         "symfony/thanks": "^1.0",
         "symfony/twig-bundle": "^4.0",
         "symfony/web-server-bundle": "^4.0",
@@ -52,8 +53,7 @@
     "prefer-stable": true,
     "extra": {
 	    "src-dir" : "tests/Application/src",
-	    "config-dir": "tests/Application/config",
-	    "bin-dir": "tests/Application/bin"
+	    "config-dir": "tests/Application/config"
     },
     "autoload": {
         "psr-4": {
@@ -62,7 +62,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "BPCI\\SumUp\\Tests\\": "tests/Application/src"
+            "BPCI\\SumUp\\Tests\\": ["tests/Application/src", "tests/Application"]
         }
     }
 }

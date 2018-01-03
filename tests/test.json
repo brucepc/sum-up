@@ -1,0 +1,14 @@
+{
+    "id": "id_test_string",
+    "name": "payum",
+    "client_id": "client_id_test",
+    "client_secret": "client_secret_test_string",
+    "application_type": "web",
+    "redirect_uris": [
+        "http://sumup.com/sumup/callback",
+        "http://test.sumup.com"
+    ],
+    "cors_uris": [
+        "http://dev.sumup.com"
+    ]
+}

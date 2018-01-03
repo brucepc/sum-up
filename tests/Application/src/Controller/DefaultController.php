@@ -15,6 +15,7 @@ use BPCI\SumUp\Tests\Entity\Checkout;
 use BPCI\SumUp\Tests\Form\CustomerType;
 use BPCI\SumUp\Tests\Form\CheckoutType;
 use BPCI\SumUp\Exception\BadRequestException;
+use BPCI\SumUp\Checkout\CheckoutClient;
 
 class DefaultController extends AbstractController
 {
@@ -82,6 +83,19 @@ class DefaultController extends AbstractController
     function checkout(Request $request): Response{
         $checkout = new Checkout();
         $form = $this->createForm(CheckoutType::class);
+        $form->add('save', SubmitType::class, [
+            'label' => 'Create Checkout'
+        ]);
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid()){
+            $checkoutData = $form->getData();
+            try{
+                $token = AuthenticationHelper::getAccessToken($this->context);
+                $checkout = CheckoutClient::create($checkout, $this->context, $token);
+            }catch(Exception $e){
+                return new Response($e->getMessage());
+            }
+        }
         return $this->render('customerForm.html.twig', [
             'form' => $form->createView()
         ]);

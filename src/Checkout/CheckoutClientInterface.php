@@ -4,6 +4,7 @@ namespace BPCI\SumUp\Checkout;
 
 use BPCI\SumUp\OAuth\AccessToken;
 use BPCI\SumUp\SumUpClientInterface;
+use BPCI\SumUp\ContextInterface;
 
 interface CheckoutClientInterface extends SumUpClientInterface
 {
@@ -20,12 +21,12 @@ interface CheckoutClientInterface extends SumUpClientInterface
     /**
      * Retrieve a checkout from sumup.com server
      *
-     * @param string $id
+     * @param CheckoutInterface $checkout
      * @param ContextInterface $context
      * @param AccessToken $accessToken
      * @return CheckoutInterface
      */
-    static public function get(string $id, ContextInterface $context, AccessToken $accessToken = null): CheckoutInterface;
+    static public function get(CheckoutInterface $checkout, ContextInterface $context, AccessToken $accessToken = null): CheckoutInterface;
 
     /**
      * Complete a checkout
