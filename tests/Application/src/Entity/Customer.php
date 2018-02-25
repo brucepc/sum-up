@@ -17,24 +17,20 @@ class Customer extends SumUpCustomer
      */
     private $id;
 
-    function __construct()
-    {
-        $this->address = new Address([]);
-    }
-
     /**
      * Get the value of id
-     */ 
+     */
     public function getId()
     {
         return $this->id;
     }
 
-    /**
-     * Set the value of id
-     *
-     * @return  self
-     */ 
+	/**
+	 * Set the value of id
+	 *
+	 * @param $id
+	 * @return Customer
+	 */
     public function setId($id)
     {
         $this->id = $id;

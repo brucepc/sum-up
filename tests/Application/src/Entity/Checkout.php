@@ -15,7 +15,12 @@ class Checkout extends SumUpCheckout
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    protected $id;
 
     // add your own fields
+	function __construct(array $data = null)
+	{
+		parent::__construct($data);
+		$this->setCustomer(new Customer());
+	}
 }

@@ -4,41 +4,217 @@ namespace BPCI\SumUp\Checkout;
 use BPCI\SumUp\Customer\CustomerInterface;
 use BPCI\SumUp\Customer\Card\CardInterface;
 
+/**
+ * Interface CheckoutInterface
+ * @package BPCI\SumUp\Checkout
+ */
 interface CheckoutInterface
 {
-    function getId(): ?string;
-    function setId(string $id): self;
-    function getStatus(): ?string;
-    function setStatus(string $status): self;
-    function getAmount(): ?float;
-    function setAmount(float $amount): self;
-    function getFeeAmount(): ?float;
-    function setFeeAmount(float $amount): self;
-    function getCurrency(): ?string;
-    function setCurrency(string $currency): self;
-    function getCustomer(): ?CustomerInterface;
-    function setCustomer(CustomerInterface $customer): self;
-    function getCard(): ?CardInterface;
-    function setCard(CardInterface $card): self;
-    function getPayToEmail(): ?string;
-    function setPayToEmail(string $email): self;
-    function getPayFromEmail(): ?string;
-    function setPayFromEmail(string $email): self;
-    function getReference(): ?string;
-    function setReference(string $reference): self;
-    function getDescription(): ?string;
-    function setDescription(string $description): self;
-    function getRedirectUrl(): ?string;
-    function setRedirectUrl(string $url): self;
-    function getValidUntil():string;
-    function setValidUntil(string $timestamp): self;
-    function getTransactionCode(): ?string;
-    function setTransactionCode(string $code): self;
-    function getTransactionId(): ?string;
-    function setTransactionId(string $id): self;
-    function getTransactions(): ?Array;
-    function setTransactions(Array $transactions): self;
-    function getToken(): ?string;
-    function setToken(string $token): self;
-    function isValid(): ?bool;
+	/**
+	 * @return null|string
+	 */
+	function getId(): ?string;
+
+	/**
+	 * @param string $id
+	 * @return CheckoutInterface
+	 */
+	function setId(string $id): self;
+
+	/**
+	 * @return null|string
+	 */
+	function getStatus(): ?string;
+
+	/**
+	 * @param string $status
+	 * @return CheckoutInterface
+	 */
+	function setStatus(string $status): self;
+
+
+	/**
+	 * @param float $amount
+	 * @return CheckoutInterface
+	 */
+	function setAmount(float $amount): self;
+
+	/**
+	 * @return float
+	 */
+	function getAmount():? float;
+
+	/**
+	 * @return float|null
+	 */
+	function getFeeAmount(): ?float;
+
+	/**
+	 * @param float $amount
+	 * @return CheckoutInterface
+	 */
+	function setFeeAmount(float $amount): self;
+
+	/**
+	 * @return null|string
+	 */
+	function getCurrency(): ?string;
+
+	/**
+	 * @param string $currency
+	 * @return CheckoutInterface
+	 */
+	function setCurrency(string $currency): self;
+
+	/**
+	 * @return CustomerInterface|null
+	 */
+	function getCustomer(): ?CustomerInterface;
+
+	/**
+	 * @param CustomerInterface $customer
+	 * @return CheckoutInterface
+	 */
+	function setCustomer(CustomerInterface $customer): self;
+
+	/**
+	 * @return CardInterface|null
+	 */
+	function getCard(): ?CardInterface;
+
+	/**
+	 * @param CardInterface $card
+	 * @return CheckoutInterface
+	 */
+	function setCard(CardInterface $card): self;
+
+	/**
+	 * @return null|string
+	 */
+	function getPayToEmail(): ?string;
+
+	/**
+	 * @param string $email
+	 * @return CheckoutInterface
+	 */
+	function setPayToEmail(string $email): self;
+
+	/**
+	 * @return null|string
+	 */
+	function getPayFromEmail(): ?string;
+
+	/**
+	 * @param string $email
+	 * @return CheckoutInterface
+	 */
+	function setPayFromEmail(string $email): self;
+
+	/**
+	 * @return null|string
+	 */
+	function getReference(): ?string;
+
+	/**
+	 * @param string $reference
+	 * @return CheckoutInterface
+	 */
+	function setReference(string $reference): self;
+
+	/**
+	 * @return null|string
+	 */
+	function getDescription(): ?string;
+
+	/**
+	 * @param string $description
+	 * @return CheckoutInterface
+	 */
+	function setDescription(string $description): self;
+
+	/**
+	 * @return null|string
+	 */
+	function getRedirectUrl(): ?string;
+
+	/**
+	 * @param string $url
+	 * @return CheckoutInterface
+	 */
+	function setRedirectUrl(string $url): self;
+
+	/**
+	 * @return string
+	 */
+	function getValidUntil():? string;
+
+	/**
+	 * @param string $timestamp
+	 * @return CheckoutInterface
+	 */
+	function setValidUntil(string $timestamp): self;
+
+	/**
+	 * @return null|string
+	 */
+	function getTransactionCode(): ?string;
+
+	/**
+	 * @param string $code
+	 * @return CheckoutInterface
+	 */
+	function setTransactionCode(string $code): self;
+
+	/**
+	 * @return null|string
+	 */
+	function getTransactionId(): ?string;
+
+	/**
+	 * @param string $id
+	 * @return CheckoutInterface
+	 */
+	function setTransactionId(string $id): self;
+
+	/**
+	 * @return array|null
+	 */
+	function getTransactions(): ?array;
+
+	/**
+	 * @param array $transactions
+	 * @return CheckoutInterface
+	 */
+	function setTransactions(array $transactions): self;
+
+	/**
+	 * @return null|string
+	 */
+	function getToken(): ?string;
+
+	/**
+	 * @param string $token
+	 * @return CheckoutInterface
+	 */
+	function setToken(string $token): self;
+
+	/**
+	 * @return bool|null
+	 */
+	function isValid(): ?bool;
+
+	/**
+	 * @param string|null $type
+	 * @return CheckoutInterface
+	 */
+	function setType(string $type = null): self;
+
+	/**
+	 * @return null|string
+	 */
+	function getType():? string;
+
+	function setInstallments(?string $installments):? self;
+	function getInstallments():? string;
+
 }

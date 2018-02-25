@@ -27,11 +27,11 @@ class DefaultController extends AbstractController
     }
 
     /**
-     * @Route("/")
+     * @Route("/", name="index")
      */
     public function index(): Response
     {
-        
+
         $oauthURI = AuthenticationHelper::getAuthorizationURL($this->context);
         return $this->render('index.html.twig', [
             'authorization_url' => $oauthURI
@@ -39,7 +39,7 @@ class DefaultController extends AbstractController
     }
 
     /**
-     * @Route("/token")
+     * @Route("/token", name="sumup_token")
      */
     public function token(): Response{
         $tokenResponse = AuthenticationHelper::getAccessToken($this->context);
@@ -47,9 +47,9 @@ class DefaultController extends AbstractController
             'accessToken' => $tokenResponse
         ]);
     }
-    
+
     /**
-     * @Route("/customer")
+     * @Route("/customer", name="sumup_customer")
      */
     public function createCustomer(Request $request): Response {
         $customer = new Customer();
@@ -75,13 +75,12 @@ class DefaultController extends AbstractController
     }
 
     /**
-     * @Route("/checkout")
+     * @Route("/checkout", name="sumup_checkout")
      *
      * @param Request $request
      * @return Response
      */
     function checkout(Request $request): Response{
-        $checkout = new Checkout();
         $form = $this->createForm(CheckoutType::class);
         $form->add('save', SubmitType::class, [
             'label' => 'Create Checkout'
@@ -89,15 +88,30 @@ class DefaultController extends AbstractController
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid()){
             $checkoutData = $form->getData();
+            $client = new CheckoutClient($this->context);
             try{
                 $token = AuthenticationHelper::getAccessToken($this->context);
-                $checkout = CheckoutClient::create($checkout, $this->context, $token);
-            }catch(Exception $e){
+                $checkoutData = $client->create($checkoutData, $token);
+            }catch(\Exception $e){
                 return new Response($e->getMessage());
             }
         }
-        return $this->render('customerForm.html.twig', [
+
+        return $this->render('checkoutForm.html.twig', [
+        	'checkout' => $checkoutData??null,
             'form' => $form->createView()
         ]);
     }
+
+	/**
+	 * @Route("/checkout/all", name="sumup_checkout_all")
+	 * @param Request $request
+	 * @return Response
+	 */
+    function getAllCheckout(Request $request): Response{
+    	$all_checkouts = CheckoutClient::getAll($this->context);
+    	return $this->render('list_checkouts.html.twig', [
+    		'checkouts' => $all_checkouts
+		]);
+	}
 }

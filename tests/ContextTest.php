@@ -21,7 +21,7 @@ class ContextTest extends TestCase
      */
     function testLoadContextFromFileException()
     {
-        Context::loadContextFromFile('notfound.json');
+        Context::loadContextFromFile('./notfound.json');
         Context::loadContextFromFile('./tests/malformed.json');
     }
 
@@ -36,6 +36,6 @@ class ContextTest extends TestCase
         $this->assertInternalType('array', $data);
         self::$context->setIndexUri(1);
         $this->assertEquals('http://test.sumup.com', self::$context->getRedirectUri());
-        
+
     }
 }

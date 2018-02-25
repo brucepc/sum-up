@@ -1,0 +1,13 @@
+{% form_theme form 'bootstrap_4_layout.html.twig' %}
+{% extends 'base.html.twig' %}
+{% block title %}New customer{% endblock %}
+{% block body %}
+	{% if checkout %}
+		{{ dump(checkout) }}
+		<a href="{{ path('sumup_checkout') }}">New Checkout</a>
+	{% else %}
+		{{ form_start(form) }}
+		{{ form_row(form) }}
+		{{ form_end(form) }}
+	{% endif %}
+{% endblock %}

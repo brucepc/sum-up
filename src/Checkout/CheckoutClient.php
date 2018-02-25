@@ -1,165 +1,184 @@
 <?php
 namespace BPCI\SumUp\Checkout;
 
-use BPCI\SumUp\SumUpClientInterface;
+use BPCI\SumUp\SumUp;
 use BPCI\SumUp\OAuth\AccessToken;
 use BPCI\SumUp\ContextInterface;
 use BPCI\SumUp\OAuth\AuthenticationHelper;
+use GuzzleHttp\Exception\BadResponseException;
+use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Psr7\Response;
+use Psr\Http\Message\ResponseInterface;
 
+/**
+ * Class CheckoutClient
+ * @package BPCI\SumUp\Checkout
+ */
 class CheckoutClient implements CheckoutClientInterface
 {
-    const ENDPOINT = 'checkouts';
-    /**
-     * @inheritDoc
-     * @throws InvalidCheckoutException
-     * @throws BadRequestException
-     */
-    public static function create(CheckoutInterface $checkout, ContextInterface $context, AccessToken $accessToken = null): CheckoutInterface
-    {
-        $accessToken = AuthenticationHelper::getValidToken($accessToken, self::getScopes());
+	const ENDPOINT = 'checkouts';
+	protected $context;
+	protected $lastResponse;
 
-        if (!$checkout->isValid()) {
-            throw new InvalidCheckoutException('Ops! Something is wrong with checkout.');
-        }
+	function __construct(ContextInterface $context)
+	{
+		$this->context = $context;
+	}
 
-        $checkoutClient = SumUp::getClient();
-        $headers = AuthenticationHelper::getHeader($accessToken);
-        $body = self::getCheckoutBody($checkout);
-        $response = $checkoutClient->post(self::ENDPOINT, $headers, $body);
+	/**
+	 * @inheritDoc
+	 * @throws BadResponseException
+	 * @throws ConnectException
+	 */
+	public function create(CheckoutInterface $checkout, AccessToken $accessToken = null):? CheckoutInterface
+	{
+		return $this->request('post', $checkout, $accessToken, self::getScopes())? $checkout: null;
+	}
 
-        if ($response->getStatusCode() === 409) {
-            $error = json_decode($response->getBody()->getContents(), true);
-            throw new BadRequestException("{$error['error_code']}: {$error['message']}");
-        }
+	/**
+	 * @inheritDoc
+	 * @throws BadResponseException
+	 * @throws ConnectException
+	 */
+	public function get(CheckoutInterface $checkout, AccessToken $accessToken = null):? CheckoutInterface
+	{
+		return $this->request('get', $checkout, $accessToken, self::getScopes())? $checkout: null;
+	}
 
-        if ($response->getStatusCode() === 200) {
-            $wrapper = new ResponseWrapper($response);
-            $wrapper->hydrate($checkout);
-            return $checkout;
-        }
 
-        return null;
-    }
+	/**
+	 * @inheritDoc
+	 * @throws BadResponseException
+	 * @throws ConnectException
+	 */
+	public function complete(CheckoutInterface $checkout, AccessToken $accessToken = null):? CheckoutInterface
+	{
+		return $this->request('put', $checkout, $accessToken, self::getScopes())? $checkout: null;
+	}
 
-    /**
-     * @inheritDoc
-     */
-    public static function get(CheckoutInterface $checkout, ContextInterface $context, AccessToken $accessToken = null): CheckoutInterface
-    {
-        //TODO fill this to retrieve an checkout from API.
-    }
+	/**
+	 * @param string $action
+	 * @param CheckoutInterface $checkout
+	 * @param AccessToken $accessToken
+	 * @param array $scopes
+	 * @return bool|null
+	 * @throws BadResponseException
+	 * @throws ConnectException
+	 */
+	protected function request(string $action, CheckoutInterface $checkout, AccessToken $accessToken, array $scopes):? bool
+	{
+		$accessToken = AuthenticationHelper::getValidToken($this->context, $accessToken, $scopes??self::getScopes());
 
-    /**
-     * @inheritDoc
-     */
-    public static function complete(CheckoutInterface $checkout, ContextInterface $context, AccessToken $accessToken = null): CheckoutInterface
-    {
-        $accessToken = AuthenticationHelper::getValidToken($accessToken, self::getScopes());
+		$client = SumUp::getClient();
+		$options = AuthenticationHelper::getOAuthHeader($accessToken);
+		$options['form_params'] = self::getCheckoutBody($checkout);
 
-        if (!$checkout->isValid()) {
-            throw new InvalidCheckoutException('Ops! Something is wrong with checkout.');
-        }
+		$uri = self::ENDPOINT . '/' . $checkout->getId();
+		if($action=='post'){
+			$uri = self::ENDPOINT;
+		}
 
-        /* @var GuzzleHttp\Client $client */
-        $client = SumUp::getClient();
-        $headers = AuthenticationHelper::getOAuthHeader($accessToken);
-        $body = self::getCompleteCheckoutBody($checkout);
+		/** @var Response $response */
+		$response = $client->{$action}($uri, $options);
+		$this->lastResponse = $response;
+		if($response->getStatusCode() < 300 && $response->getStatusCode() >= 200){
+			$hydrator = SumUp::getHydrator();
+			$data = \GuzzleHttp\json_decode($response->getBody(), true);
+			$hydrator->hydrate($data, $checkout);
+			return true;
+		}
 
-        if($checkout->getCurrency==='BRL') {
-            $body['installments'] = $checkout->getInstallments();
-        }
+		return false;
+	}
 
-        $response = $client->put(self::ENDPOINT . '/' . $checkout->getId(), $headers, $body);
+	/**
+	 * Generate a body to create a new checkout
+	 *
+	 * @param CheckoutInterface $checkout
+	 * @return array
+	 */
+	public static function getCheckoutBody(CheckoutInterface $checkout): array
+	{
+		return [
+			"checkout_reference" => $checkout->getReference(),
+			"amount" => $checkout->getAmount(),
+			"currency" => $checkout->getCurrency(),
+			"fee_amount" => $checkout->getFeeAmount(),
+			"pay_to_email" => $checkout->getPayToEmail(),
+			"pay_from_email" => $checkout->getPayFromEmail(),
+			"description" => $checkout->getDescription(),
+			"return_url" => $checkout->getRedirectUrl(),
+		];
+	}
 
-        if ($response->getStatusCode() === 409) {
-            $error = json_decode($response->getBody()->getContents(), true);
-            throw new BadRequestException("{$error['error_code']}: {$error['message']}");
-        }
+	public static function getCompleteCheckoutBody(CheckoutInterface $checkout): array
+	{
+		$defaultBody = self::getCheckoutBody($checkout);
+		switch ($checkout->getType()) {
+			case 'card':
+				$completeBody = self::getCardBody($checkout);
+				break;
 
-        if ($response->getStatusCode() === 200) {
-            $wrapper = new ResponseWrapper($response);
-            $wrapper->hydrate($checkout);
+			case 'boleto':
+				$completeBody = self::getBoletoBody($checkout);
+				break;
 
-            return $checkout;
-        }
+			default:
+				$completeBody = [];
+		}
 
-        return null;
-    }
+		return array_merge($defaultBody, $completeBody);
+	}
 
-    /**
-     * Generate a body to create a new checkout
-     *
-     * @param CheckoutInterface $checkout
-     * @return array
-     */
-    public static function getCheckoutBody(CheckoutInterface $checkout): array
-    {
-        return [
-            "checkout_reference" => $checkout->getCheckoutReference(),
-            "amount" => $checkout->getAmout(),
-            "currency" => $checkout->getCurrency(),
-            "pay_to_email" => $checkout->getPayToEmail(),
-            "pay_from_email" => $checkout->getPayFromEmail(),
-            "fee_amount" => $checkout->getFeeAmount(),
-            "description" => $checkout->getDescription(),
-            "return_url" => $checkout->getRedirectUrl(),
-        ];
-    }
+	private static function getCardBody(CheckoutInterface $checkout): array
+	{
+		return [
+			'payment_type' => $checkout->getType(),
+			'token' => $checkout->getCard()->getToken(),
+			'customer_id' => $checkout->getCustomer()->getCustomerId()
+		];
+	}
 
-    public static function getCompleteCheckoutBody(CheckoutInterface $checkout): array 
-    {
-        $defaultBody = self::getCheckoutBody($checkout);
-        switch ($checkout->getType()) {
-            case 'card':
-                $completeBody = self::getCardBody($checkout);
-                break;
-            
-            case 'boleto':
-                $completeBody = [];
-                break;
-            
-            default:
-                throw new InvalidCheckoutException('Ops! The checkout type requested was not implemented yet.');
-                break;
-        }
+	private static function getBoletoBody(CheckoutInterface $checkout): array
+	{
+		$customer = $checkout->getCustomer();
+		return [
+			'payment_type' => $checkout->getType(),
+			'description' => $checkout->getDescription(),
+			'boleto_details' => [
+				'cpf_cnpj' => $customer->getCpfCnpj(),
+				'payer_name' => $customer->getName(),
+				'payer_address' => $customer->getAddress(),
+				'payer_city' => $customer->getAddress()->getCity(),
+				'payer_state_code' => $customer->getAddress()->getState(),
+				'payer_post_code' => $customer->getAddress()->getPostalCode()
+			],
+		];
+	}
 
-        return array_merge($defaultBody, $completeBody);
-    }
+	/**
+	 * @inheritDoc
+	 */
+	public static function getScopes(): array
+	{
+		return [
+			'payments',
+			'boleto'
+		];
+	}
 
-    private static function getCardBody(CheckoutInterface $checkout): Array
-    {
-        return [
-            'payment_type' => $checkout->getType(),
-            'token' => $checkout->getCard()->getToken(),
-            'customer_id' => $checkout->getCustomer()->getId()
-        ];
-    }
+	function getLastResponse(): ResponseInterface
+	{
+		return $this->lastResponse;
+	}
 
-    private static function getBoletoBody(CheckoutInterface $checkout)
-    {
-        $customer = $checkout->getCustomer();
-        return [
-            'payment_type' => $checkout->getType(),
-            'description' => $checkout->getDescription(),
-            'boleto_details' => [
-                'cpf_cnpj' => $customer->getCpfCnpj(),
-                'payer_name' => $customer->getName(),
-                'payer_address' => $customer->getAddress(),
-                'payer_city' => $customer->getCity(),
-                'payer_state_code' => $customer->getState(),
-                'payer_post_code' => $customer->getPost()
-            ],
-        ];
-    }
-    
-    /**
-     * @inheritDoc
-     */
-    public static function getScopes(): array
-    {
-        return [
-            'payments',
-            'boleto'
-        ];
-    }
+	/**
+	 * return the context used to created the client.
+	 * @return ContextInterface
+	 */
+	function getContext(): ContextInterface
+	{
+		return $this->context;
+	}
+
 }

@@ -2,13 +2,16 @@
 {% block title %}SumUp Test{% endblock %}
 
 {% block body %}
-<h3> SumUp SDK Test App </h3>
-<ul>
-<li>
-<a href="{{ authorization_url }}">SumUp Autorize</a>
-</li>
-<li>
-<a href="/token">Get Token</a>
-</li>
-</ul>
+	<h3> SumUp SDK Test App </h3>
+	<ul>
+		<li>
+			<a href="{{ authorization_url }}">SumUp Autorize</a>
+		</li>
+		<li>
+			<a href="{{ path('sumup_token') }}">Get Token</a>
+		</li>
+		<li>
+			<a href="{{ path('sumup_checkout') }}">Checkout</a>
+		</li>
+	</ul>
 {% endblock %}

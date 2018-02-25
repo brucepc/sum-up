@@ -2,7 +2,7 @@
 
 namespace BPCI\SumUp\Tests\Form;
 
-use BPCI\SumUp\Tests\Entity\Address;
+use BPCI\SumUp\Customer\Address;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
