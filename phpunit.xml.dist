@@ -31,7 +31,7 @@
         </whitelist>
     </filter>
     <logging>
-        <log type="coverage-html" target="build/html"/>
+        <!--<log type="coverage-html" target="build/html"/>-->
         <log type="coverage-clover" target="build/clover.xml"/>
     </logging>
 </phpuniti>
