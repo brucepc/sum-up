@@ -17,7 +17,7 @@ class PaymentInstrumentClient implements PaymentInstrumentClientInterface, Clien
     use Client;
 
     protected $context;
-    protected $options;
+    protected $options = [];
     protected $token;
     /**
      * @var CustomerInterface

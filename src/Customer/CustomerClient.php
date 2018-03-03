@@ -21,7 +21,7 @@ class CustomerClient implements CustomerClientInterface, ClientInterface
     protected $context;
     protected $token;
     protected $lastResponse;
-    protected $options;
+    protected $options = [];
 
     /**
 	 * CheckoutClientInterface constructor.

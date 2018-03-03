@@ -17,7 +17,8 @@ class Currency
         return in_array($currency, $currencies);
     }
 
-    static function getCurrencies(): Array{
+    static function getCurrencies(): array
+    {
         $rClass = new \ReflectionClass(__CLASS__);
         return $rClass->getConstants();
     }

@@ -199,9 +199,9 @@ interface CheckoutInterface
 	function setToken(string $token): self;
 
 	/**
-	 * @return bool|null
+     * @return bool
 	 */
-	function isValid(): ?bool;
+    function isValid(): bool;
 
 	/**
 	 * @param string|null $type

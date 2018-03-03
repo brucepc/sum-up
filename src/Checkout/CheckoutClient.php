@@ -24,7 +24,7 @@ class CheckoutClient implements CheckoutClientInterface, ClientInterface
 
 	protected $context;
 	protected $lastResponse;
-    protected $options;
+    protected $options = [];
     protected $currentToken;
 
     function __construct(ContextInterface $context, ?array $options = [])
