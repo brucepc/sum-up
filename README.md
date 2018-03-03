@@ -4,7 +4,7 @@
 [![Build Status](https://scrutinizer-ci.com/g/brucepc/sum-up/badges/build.png?b=master)](https://scrutinizer-ci.com/g/brucepc/sum-up/build-status/master)
 [![Code Intelligence Status](https://scrutinizer-ci.com/g/brucepc/sum-up/badges/code-intelligence.svg?b=master)](https://scrutinizer-ci.com/code-intelligence)
 
-###Run Symfony app test
+###Running simple symfony app test
 ```bash
 bin/console server:run -d tests/Application/public
 ```

@@ -77,9 +77,8 @@ class Customer implements CustomerInterface
 	/**
 	 * Set customer Name
 	 *
-	 * @param  string  $name  Customer Name
-	 *
-	 * @return  self
+     * @param  string $name Customer Name
+     * @return Customer|CustomerInterface
 	 */
 	public function setName(?string $name): CustomerInterface
 	{
@@ -101,9 +100,8 @@ class Customer implements CustomerInterface
 	/**
 	 * Set customer phone
 	 *
-	 * @param  string  $phone  Customer phone
-	 *
-	 * @return  self
+     * @param  string $phone Customer phone
+     * @return Customer|CustomerInterface
 	 */
 	public function setPhone(?string $phone): CustomerInterface
 	{
@@ -132,14 +130,6 @@ class Customer implements CustomerInterface
 	{
 		$this->address = $address;
 		return $this;
-	}
-
-	/**
-	 * @return bool
-	 */
-	function isValid():bool
-	{
-		return $this->getCustomerId()!==null;
 	}
 
 }

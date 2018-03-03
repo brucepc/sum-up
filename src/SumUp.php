@@ -11,16 +11,20 @@ class SumUp
 	const ENTRYPOINT = 'https://api.sumup.com/';
 
 	/**
-	 * @return ClientInterface
+     * @param array $options
+     * @return ClientInterface
 	 */
-	static function getClient(): ClientInterface
+    static function getClient(array $options = []): ClientInterface
 	{
-		return new Client(
+        $options = array_merge_recursive(
 			[
 				'base_uri' => self::getEntrypoint(),
 				'timeout' => 2
-			]
+            ],
+            $options
 		);
+
+        return new Client($options);
 	}
 
 	static function getEntrypoint(): string

@@ -1,49 +1,64 @@
 <?php
-namespace BPCI\SumUp\Customer\Card;
 
-class Card implements CardInterface
+namespace BPCI\SumUp\Customer\PaymentInstrument;
+
+/**
+ * Class PaymentInstrument
+ * @package BPCI\SumUp\Customer\PaymentInstrument
+ */
+class PaymentInstrument implements PaymentInstrumentInterface
 {
     /**
      * Token
      *
      * @var string
      */
-    private $token;
+    protected $token;
 
     /**
      * Active - state of token
      *
      * @var bool
      */
-    private $active;
+    protected $active;
 
     /**
      * Type of token
      *
      * @var string
      */
-    private $type;
+    protected $type;
 
     /**
      * Last 4 digits of card
      *
      * @var string
      */
-    private $last4Digits;
+    protected $last4Digits;
 
     /**
      * Schema card mastercard, visa, etc...
      *
      * @var string
      */
-    private $cardSchema;
+    protected $cardSchema;
+
+    protected $customer;
+
+    public function __construct(?array $data = [])
+    {
+        $this->setToken($data['token']??null);
+        $this->setActive($data['active']??null);
+        $this->setType($data['type']??null);
+        $this->setCard($data['card']??null);
+    }
 
     /**
      * Get token
      *
      * @return  string
      */
-    public function getToken()
+    public function getToken():? string
     {
         return $this->token;
     }
@@ -53,9 +68,9 @@ class Card implements CardInterface
      *
      * @param  string  $token  Token
      *
-     * @return  self
+     * @return PaymentInstrumentInterface
      */
-    public function setToken(string $token)
+    public function setToken(?string $token): PaymentInstrumentInterface
     {
         $this->token = $token;
 
@@ -67,7 +82,7 @@ class Card implements CardInterface
      *
      * @return  bool
      */
-    public function getActive()
+    public function getActive():? bool
     {
         return $this->active;
     }
@@ -77,9 +92,9 @@ class Card implements CardInterface
      *
      * @param  bool  $active  Active - state of token
      *
-     * @return  self
+     * @return PaymentInstrumentInterface
      */
-    public function setActive(bool $active)
+    public function setActive(?bool $active): PaymentInstrumentInterface
     {
         $this->active = $active;
 
@@ -91,7 +106,7 @@ class Card implements CardInterface
      *
      * @return  string
      */
-    public function getType()
+    public function getType():? string
     {
         return $this->type;
     }
@@ -101,9 +116,9 @@ class Card implements CardInterface
      *
      * @param  string  $type  Type of token
      *
-     * @return  self
+     * @return PaymentInstrumentInterface
      */
-    public function setType(string $type)
+    public function setType(?string $type): PaymentInstrumentInterface
     {
         $this->type = $type;
 
@@ -115,7 +130,7 @@ class Card implements CardInterface
      *
      * @return  string
      */
-    public function getLast4Digits()
+    public function getLast4Digits():? string
     {
         return $this->last4Digits;
     }
@@ -125,9 +140,9 @@ class Card implements CardInterface
      *
      * @param  string  $last4Digits  Last 4 digits of card
      *
-     * @return  self
+     * @return PaymentInstrumentInterface
      */
-    public function setLast4Digits(string $last4Digits)
+    public function setLast4Digits(?string $last4Digits): PaymentInstrumentInterface
     {
         $this->last4Digits = $last4Digits;
 
@@ -135,23 +150,23 @@ class Card implements CardInterface
     }
 
     /**
-     * Get Card Schema
+     * Get PaymentInstrument Schema
      *
      * @return  string
      */
-    public function getCardType()
+    public function getCardType():? string
     {
         return $this->cardSchema;
     }
 
     /**
-     * Set Card Schema
+     * Set PaymentInstrument Schema
      *
-     * @param  string  $cardSchema  Card Schema
+     * @param  string $cardSchema PaymentInstrument Schema
      *
-     * @return  self
+     * @return PaymentInstrumentInterface
      */
-    public function setCardType(string $cardSchema)
+    public function setCardType(?string $cardSchema): PaymentInstrumentInterface
     {
         $this->cardSchema = $cardSchema;
 
@@ -159,16 +174,16 @@ class Card implements CardInterface
     }
 
     /**
-     * Get Card array
+     * Get PaymentInstrument array
      * e.g.: [
      *     'last_4_digits' => '0000',
-     *     'type'          => 'Card Schema'
+     *     'type'          => 'PaymentInstrument Schema'
      * ]
      *
      * @see http://docs.sumup.com/rest-api/checkouts-api/#customers-payment-instruments-post
-     * @return Array
+     * @return array
      */
-    public function getCard(): array
+    public function getCard():? array
     {
         return [
             'last_4_digits' => $this->getLast4Digits(),
@@ -177,16 +192,24 @@ class Card implements CardInterface
     }
 
     /**
-     * Set Card array
+     * Set PaymentInstrument array
      *
      * @see http://docs.sumup.com/rest-api/checkouts-api/#customers-payment-instruments-post
      * @param array $data
-     * @return self
+     * @return PaymentInstrumentInterface
      */
-    public function setCard(array $data): self
+    public function setCard(?array $data): PaymentInstrumentInterface
     {
         $this->setLast4Digits($data['last_4_digits']);
         $this->setCardType($data['type']);
         return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    function isActive(): bool
+    {
+        return $this->active??false;
     }
 }

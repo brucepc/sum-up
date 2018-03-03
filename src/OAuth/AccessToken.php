@@ -18,6 +18,7 @@ class AccessToken
      * @param string $token
      * @param string $type
      * @param integer $expiresIn
+     * @param string|null $scope
      */
     function __construct(string $token, string $type, int $expiresIn, string $scope = null){
         $this->token = $token;
@@ -36,7 +37,7 @@ class AccessToken
      */
     function isValid(): bool
     {
-        return $this->getToken() !== '' && time() > $this->expiration;
+        return $this->getToken() !== '' && time() < $this->expiration;
     }
 
     /**
@@ -72,9 +73,9 @@ class AccessToken
     /**
      * Get scope
      *
-     * @return Array
+     * @return array
      */
-    function getScope(): Array
+    function getScope(): array
     {
         return $this->scope;
     }

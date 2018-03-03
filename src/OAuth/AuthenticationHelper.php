@@ -4,14 +4,12 @@ namespace BPCI\SumUp\OAuth;
 
 use BPCI\SumUp\ContextInterface;
 use BPCI\SumUp\Exception\BadRequestException;
-use BPCI\SumUp\OAuth\AccessToken;
 use BPCI\SumUp\SumUp;
-use GuzzleHttp\Client;
 
 class AuthenticationHelper
 {
-	const OAUTH_AUTHORIZATION = 'authorize';
-	const OAUTH_TOKEN = 'token';
+    const OAUTH_AUTHORIZATION = '/authorize';
+    const OAUTH_TOKEN = '/token';
 
 	/**
 	 * Generate an url to merchant authorization.
@@ -42,12 +40,16 @@ class AuthenticationHelper
 	/**
 	 * Request an acess token from sumup services.
 	 *
-	 * @param Context $context
-	 * @param Array|null $scopes
-	 * @return AccessToken
-	 * @throws BadRequestException
+     * @param ContextInterface $context
+     * @param array|null $scopes
+     * @param array $options
+     * @return \BPCI\SumUp\OAuth\AccessToken
 	 */
-	public static function getAccessToken(ContextInterface $context, array $scopes = null): AccessToken
+    public static function getAccessToken(
+        ContextInterface $context,
+        array $scopes = null,
+        array $options = []
+    ): AccessToken
 	{
 		$formParams = [
 			'grant_type' => 'client_credentials',
@@ -59,7 +61,7 @@ class AuthenticationHelper
 			$formParams['scope'] = implode(',', $scopes);
 		}
 
-		$client = new Client(['base_uri' => SumUp::ENTRYPOINT]);
+        $client = SumUp::getClient($options);
 
 		$response = $client->request(
 			'POST',
@@ -94,13 +96,19 @@ class AuthenticationHelper
 	 * @param ContextInterface $context
 	 * @param AccessToken $token
 	 * @param array $scopes
-	 *
-	 * @return AccessToken
+     * @param array $options
+     *
+     * @return \BPCI\SumUp\OAuth\AccessToken
 	 */
-	public static function getValidToken(ContextInterface $context, AccessToken $token = null, array $scopes = null): AccessToken
+    public static function getValidToken(
+        ContextInterface $context,
+        AccessToken $token = null,
+        array $scopes = null,
+        array $options = []
+    ): AccessToken
 	{
 		if ($token === null || !$token->isValid()) {
-			$token = AuthenticationHelper::getAccessToken($context, $scopes);
+            $token = AuthenticationHelper::getAccessToken($context, $scopes, $options);
 		}
 
 		return $token;

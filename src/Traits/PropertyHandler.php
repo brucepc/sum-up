@@ -14,7 +14,7 @@ trait PropertyHandler
 	/**
 	 * @param array $data
 	 */
-	function fillProperties(array $data)
+    function fillProperties(array $data): void
 	{
 		foreach ($data as $p => $v)
 		{
@@ -26,7 +26,7 @@ trait PropertyHandler
 	 * @param string $property
 	 * @param mixed $value
 	 */
-	function fillProperty(string $property, $value)
+    function fillProperty(string $property, $value): void
 	{
 		$property = lcfirst(str_replace('_', '', ucwords($property, '_')));
 		if(property_exists(__CLASS__, $property))

@@ -2,54 +2,32 @@
 
 namespace BPCI\SumUp\Checkout;
 
-use BPCI\SumUp\OAuth\AccessToken;
 use BPCI\SumUp\SumUpClientInterface;
-use BPCI\SumUp\ContextInterface;
 
 interface CheckoutClientInterface extends SumUpClientInterface
 {
-
 	/**
      * Create a checkout
      *
      * @param CheckoutInterface $checkout
-     * @param AccessToken $accessToken
      * @return CheckoutInterface
+     * @see http://docs.sumup.com/rest-api/checkouts-api/#checkouts-create-checkout-post
      */
-    public function create(CheckoutInterface $checkout, AccessToken $accessToken = null):? CheckoutInterface;
-
-    /**
-     * Retrieve a checkout from sumup.com server
-     *
-     * @param CheckoutInterface $checkout
-     * @param AccessToken $accessToken
-     * @return CheckoutInterface
-     */
-    public function get(CheckoutInterface $checkout, AccessToken $accessToken = null):? CheckoutInterface;
+    public function create(CheckoutInterface $checkout):? CheckoutInterface;
 
     /**
      * Complete a checkout
      *
      * @param CheckoutInterface $checkout
-     * @param AccessToken $accessToken
      * @return CheckoutInterface
+     * @see http://docs.sumup.com/rest-api/checkouts-api/#checkouts-complete-checkout-put
      */
-    public function complete(CheckoutInterface $checkout, AccessToken $accessToken = null):? CheckoutInterface;
+    public function complete(CheckoutInterface $checkout):? CheckoutInterface;
 
     /**
-     * Generate body to request a new checkout.
-     *
      * @param CheckoutInterface $checkout
-     * @return array
-     */
-    static function getCheckoutBody(CheckoutInterface $checkout): array;
-
-	/**
-	 * Generate a body to a complete checkout request.
-	 *
-	 * @param CheckoutInterface $checkout
-	 * @return array
+     * @return string
 	 */
-    static function getCompleteCheckoutBody(CheckoutInterface $checkout): array;
+    static function getCompleteUrl(CheckoutInterface $checkout): string;
 
 }

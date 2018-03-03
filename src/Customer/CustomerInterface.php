@@ -11,5 +11,4 @@ interface CustomerInterface
     function setPhone(?string $phone): self;
     function getAddress(): AddressInterface;
     function setAddress(AddressInterface $address): self;
-    function isValid(): bool;
 }

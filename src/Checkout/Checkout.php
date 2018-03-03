@@ -1,23 +1,15 @@
 <?php
 namespace BPCI\SumUp\Checkout;
 
-use BPCI\SumUp\ContextInterface;
-use BPCI\SumUp\Customer\Card\Card;
 use BPCI\SumUp\Customer\Customer;
-use BPCI\SumUp\Exception\BadRequestException;
-use BPCI\SumUp\Exception\InvalidCheckoutException;
-use BPCI\SumUp\OAuth\AccessToken;
-use BPCI\SumUp\OAuth\AuthenticationHelper;
-use BPCI\SumUp\SumUp;
 use BPCI\SumUp\Customer\CustomerInterface;
-use BPCI\SumUp\Customer\Card\CardInterface;
+use BPCI\SumUp\Customer\PaymentInstrument\PaymentInstrument;
+use BPCI\SumUp\Customer\PaymentInstrument\PaymentInstrumentInterface;
 use BPCI\SumUp\Traits\PropertyHandler;
+use BPCI\SumUp\Traits\PropertyHandlerInterface;
 use BPCI\SumUp\Utils\Currency;
-use BPCI\SumUp\Utils\Hydrator;
 
-/**
- */
-class Checkout implements CheckoutInterface
+class Checkout implements CheckoutInterface, PropertyHandlerInterface
 {
 	use PropertyHandler;
 
@@ -56,10 +48,10 @@ class Checkout implements CheckoutInterface
 	protected $customer;
 
 	/**
-	 * Card
+     * PaymentInstrument
 	 *
 	 *
-	 * @var null|Card
+     * @var null|PaymentInstrument
 	 */
 	protected $card;
 
@@ -71,10 +63,10 @@ class Checkout implements CheckoutInterface
 	 */
 	public function __construct(array $data = null) {
 		if ($data !== null) {
-			$this->setAmount($data['amount']??null);
-			$this->setPayToEmail($data['pay_to_email']??null);
-			$this->setCheckoutReference($data['checkout_reference']??null);
-			$this->setCurrency($data['currency']??null);
+            $this->setAmount($data['amount']??0);
+            $this->setPayToEmail($data['pay_to_email']??'');
+            $this->setCheckoutReference($data['checkout_reference']??'');
+            $this->setCurrency($data['currency']??'');
 			$this->setDescription($data['description']??null);
 			$this->setFeeAmount($data['fee_amount']??null);
 			$this->setPayFromEmail($data['pay_from_mail']??null);
@@ -91,6 +83,7 @@ class Checkout implements CheckoutInterface
 		return $this->getReference() !== null
 			&& $this->getAmount() !== null
 			&& $this->getPayToEmail() !== null
+            && $this->getAmount() > 0
 			&& Currency::isValid($this->getCurrency());
 	}
 
@@ -318,9 +311,9 @@ class Checkout implements CheckoutInterface
 	/**
 	 * Get card
 	 *
-	 * @return  null|CardInterface
+     * @return  null|PaymentInstrumentInterface
 	 */
-	public function getCard(): ?CardInterface
+    public function getCard(): ?PaymentInstrumentInterface
 	{
 		return $this->card;
 	}
@@ -328,11 +321,11 @@ class Checkout implements CheckoutInterface
 	/**
 	 * Set card
 	 *
-	 * @param  null|CardInterface  $card
+     * @param  null|PaymentInstrumentInterface $card
 	 *
 	 * @return  CheckoutInterface
 	 */
-	public function setCard(?CardInterface $card): CheckoutInterface
+    public function setCard(?PaymentInstrumentInterface $card): CheckoutInterface
 	{
 		$this->card = $card;
 

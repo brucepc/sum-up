@@ -2,151 +2,60 @@
 namespace BPCI\SumUp\Customer;
 
 use BPCI\SumUp\ContextInterface;
-use BPCI\SumUp\Customer\Card\CardInterface;
+use BPCI\SumUp\Customer\PaymentInstrument\PaymentInstrumentClient;
+use BPCI\SumUp\Customer\PaymentInstrument\PaymentInstrumentInterface;
 use BPCI\SumUp\Exception\BadRequestException;
 use BPCI\SumUp\Exception\InvalidCustomerException;
 use BPCI\SumUp\OAuth\AccessToken;
-use BPCI\SumUp\OAuth\AuthenticationHelper;
-use BPCI\SumUp\SumUp;
+use BPCI\SumUp\SumUpClientInterface;
+use BPCI\SumUp\Traits\Client;
+use BPCI\SumUp\Traits\ClientInterface;
 use BPCI\SumUp\Utils\Hydrator;
 use Psr\Http\Message\ResponseInterface;
 
-class CustomerClient implements CustomerClientInterface
+class CustomerClient implements CustomerClientInterface, ClientInterface
 {
+    use Client;
+
     const ENDPOINT = 'customers';
     protected $context;
+    protected $token;
     protected $lastResponse;
+    protected $options;
 
     /**
 	 * CheckoutClientInterface constructor.
 	 * @param ContextInterface $context
-	 */
-	public function __construct(ContextInterface $context)
+     * @param array $options
+     */
+    public function __construct(ContextInterface $context, ?array $options = [])
 	{
 		$this->context = $context;
+        $this->options = $options;
 	}
 
     /**
      * @inheritDoc
      * @throws BadRequestException
      */
-    public function createCard(CustomerInterface $customer, CardInterface $card, AccessToken $accessToken): ?CardInterface
+    public function create(CustomerInterface $customer): ?CustomerInterface
     {
-        //TODO Implement this method
-
+        return $this->request('post', $customer) ? $customer : null;
     }
 
     /**
-     * @inheritDoc
-     * @throws BadRequestException
+     * @param $customer
+     * @param string|null $type
+     * @return array
      */
-    public function getCards(CustomerInterface $custome, AccessToken $accessToken): array
+    static function getBody($customer, string $type = null)
     {
-        //TODO Implement this method
-    }
-
-    /**
-     * @inheritDoc
-     * @throws BadRequestException
-     */
-    public function deleteCard(CustomerInterface $customer, CardInterface $card, AccessToken $accessToken): void
-    {
-        //TODO Implement this method
-    }
-
-    /**
-     * @inheritDoc
-     * @throws BadRequestException
-     * @throws InvalidCustomerException
-     */
-    public function create(CustomerInterface $customer, AccessToken $accessToken): ?CustomerInterface
-    {
-        $accessToken = AuthenticationHelper::getValidToken($this->context, $accessToken, self::getScopes());
-        self::validateCustomer($customer);
-        $client = SumUp::getClient();
-        $headers = AuthenticationHelper::getOAuthHeader($accessToken);
-        $body = self::getCustomerBody($customer);
-        try {
-            $response = $client->post(self::ENDPOINT, [
-                'headers' => $headers
-            ], $body);
-            $successul = $response->getStatusCode() === 201;
-        } catch(\GuzzleHttp\Exception\RequestException $e){
-            throw new BadRequestException(
-                $e->getMessage(),
-                $e->getRequest(),
-                $e->getResponse()
-            );
+        if (!$customer instanceof CustomerInterface) {
+            throw new InvalidCustomerException('Invalid customer or $customer does not implement CustomerInterface!');
         }
 
-        if ($successul) {
-            $wrapper = new Hydrator($response);
-            $customer = $wrapper->hydrate($customer);
-            return $customer;
-        }
-
-        return null;
-    }
-
-	private function request(string $action, CustomerInterface $customer, AccessToken $accessToken, array $scopes):? CustomerInterface
-	{
-		$accessToken = AuthenticationHelper::getValidToken(
-			$this->context,
-			$accessToken,
-			$scopes??self::getScopes()
-		);
-
-		$client = SumUp::getClient();
-		$options = AuthenticationHelper::getOAuthHeader($accessToken);
-		$options['form_params'] = self::getCustomerBody($customer);
-
-		$successCode=200;
-		$uri = self::ENDPOINT . '/' . $customer->getCustomerId();
-		switch (true){
-			case $action==='create': {
-				$action='post';
-				$successCode=201;
-				$uri = self::ENDPOINT;
-				break;
-			}
-			case $action==='complete': {
-				$action='put';
-				break;
-			}
-			default:{
-				$action='get';
-				break;
-			}
-		}
-
-		/** @var ResponseInterface $response */
-		$response = $client->{$action}($uri, $options);
-		$this->lastResponse = $response;
-		if($successCode===$response->getStatusCode()){
-			$wrapper = new Hydrator($response);
-			return $wrapper->hydrate($customer);
-		}
-
-		return null;
-	}
-
-    /**
-     * Validate an customer
-     *
-     * @param CustomerInterface $customer
-     * @return void
-     * @throws InvalidCustomerException
-     */
-    private static function validateCustomer(CustomerInterface $customer): void
-    {
-        if (!$customer->isValid()) {
-            throw new InvalidCustomerException('Ops! Something is wrong with this CustomerInterface Instance');
-        }
-    }
-
-    public static function getCustomerBody(CustomerInterface $customer): array
-    {
-        $customerBody = [
+        $body = [
+            'customer_id' => $customer->getCustomerId(),
             'personal_details' => [
                 'name' => $customer->getName(),
                 'phone' => $customer->getPhone(),
@@ -161,11 +70,7 @@ class CustomerClient implements CustomerClientInterface
             ],
         ];
 
-        if ($customer->getCustomerId() !== null) {
-            $customerBody['customer_id'] = $customer->getCustomerId();
-        }
-
-        return $customerBody;
+        return $body;
     }
 
     public function setContext(ContextInterface $context): CustomerClientInterface
@@ -195,6 +100,87 @@ class CustomerClient implements CustomerClientInterface
 	 */
 	function getContext(): ContextInterface
 	{
-		// TODO: Implement getContext() method.
+        return $this->context;
+    }
+
+    /**
+     * Delete a customer card.
+     *
+     * @param CustomerInterface $customer
+     * @param PaymentInstrumentInterface $paymentInstrument
+     * @return bool
+     */
+    function disablePaymentInstrument(CustomerInterface $customer, PaymentInstrumentInterface $paymentInstrument): bool
+    {
+        $instrumentClient = new PaymentInstrumentClient($this->getContext(), $this->getOptions());
+        $instrumentClient->setCustomer($customer);
+        $instrumentClient->setToken($this->getToken());
+        $response = $instrumentClient->disable($paymentInstrument);
+        $this->setLastResponse($instrumentClient->getLastResponse());
+
+        return $response;
+    }
+
+    /**
+     * This must return an Array of PaymentInstrumentInterface
+     *
+     * @param CustomerInterface $customer
+     * @return array
+     */
+    function getPaymentInstruments(CustomerInterface $customer): array
+    {
+        $instrumentClient = new PaymentInstrumentClient($this->getContext(), $this->getOptions());
+        $instrumentClient->setCustomer($customer);
+        $instrumentClient->setToken($this->getToken());
+        $response = $instrumentClient->get();
+        $this->setLastResponse($instrumentClient->getLastResponse());
+
+        return $response;
+    }
+
+    /**
+     * @param ResponseInterface $response
+     * @return SumUpClientInterface
+     */
+    function setLastResponse(ResponseInterface $response): SumUpClientInterface
+    {
+        $this->lastResponse = $response;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    function getOptions(): array
+    {
+        return $this->options;
+    }
+
+    /**
+     * @return string
+     */
+    function getEndPoint(): string
+    {
+        return 'customers';
+    }
+
+    /**
+     * @param AccessToken $token
+     * @return SumUpClientInterface
+     */
+    function setToken(AccessToken $token): SumUpClientInterface
+    {
+        $this->token = $token;
+
+        return $this;
+    }
+
+    /**
+     * @return AccessToken
+     */
+    function getToken():? AccessToken
+    {
+        return $this->token;
 	}
 }

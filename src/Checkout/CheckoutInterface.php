@@ -2,7 +2,7 @@
 namespace BPCI\SumUp\Checkout;
 
 use BPCI\SumUp\Customer\CustomerInterface;
-use BPCI\SumUp\Customer\Card\CardInterface;
+use BPCI\SumUp\Customer\PaymentInstrument\PaymentInstrumentInterface;
 
 /**
  * Interface CheckoutInterface
@@ -47,7 +47,7 @@ interface CheckoutInterface
 	/**
 	 * @return float|null
 	 */
-	function getFeeAmount(): ?float;
+    function getFeeAmount():? float;
 
 	/**
 	 * @param float $amount
@@ -78,15 +78,15 @@ interface CheckoutInterface
 	function setCustomer(CustomerInterface $customer): self;
 
 	/**
-	 * @return CardInterface|null
+     * @return PaymentInstrumentInterface|null
 	 */
-	function getCard(): ?CardInterface;
+    function getCard(): ?PaymentInstrumentInterface;
 
 	/**
-	 * @param CardInterface $card
+     * @param PaymentInstrumentInterface $card
 	 * @return CheckoutInterface
 	 */
-	function setCard(CardInterface $card): self;
+    function setCard(PaymentInstrumentInterface $card): self;
 
 	/**
 	 * @return null|string

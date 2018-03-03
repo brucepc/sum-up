@@ -1,28 +1,36 @@
 <?php
 namespace BPCI\SumUp\Checkout;
 
-use BPCI\SumUp\SumUp;
-use BPCI\SumUp\OAuth\AccessToken;
 use BPCI\SumUp\ContextInterface;
-use BPCI\SumUp\OAuth\AuthenticationHelper;
+use BPCI\SumUp\Exception\InvalidCheckoutException;
+use BPCI\SumUp\OAuth\AccessToken;
+use BPCI\SumUp\SumUp;
+use BPCI\SumUp\SumUpClientInterface;
+use BPCI\SumUp\Traits\Client;
+use BPCI\SumUp\Traits\ClientInterface;
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\ConnectException;
-use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
 
 /**
  * Class CheckoutClient
  * @package BPCI\SumUp\Checkout
  */
-class CheckoutClient implements CheckoutClientInterface
+class CheckoutClient implements CheckoutClientInterface, ClientInterface
 {
-	const ENDPOINT = 'checkouts';
+    use Client {
+        request as protected traitRequest;
+    }
+
 	protected $context;
 	protected $lastResponse;
+    protected $options;
+    protected $currentToken;
 
-	function __construct(ContextInterface $context)
+    function __construct(ContextInterface $context, ?array $options = [])
 	{
 		$this->context = $context;
+        $this->options = $options;
 	}
 
 	/**
@@ -30,9 +38,9 @@ class CheckoutClient implements CheckoutClientInterface
 	 * @throws BadResponseException
 	 * @throws ConnectException
 	 */
-	public function create(CheckoutInterface $checkout, AccessToken $accessToken = null):? CheckoutInterface
+    function create(CheckoutInterface $checkout, AccessToken $accessToken = null):? CheckoutInterface
 	{
-		return $this->request('post', $checkout, $accessToken, self::getScopes())? $checkout: null;
+        return $this->request('post', $checkout) ? $checkout : null;
 	}
 
 	/**
@@ -40,55 +48,24 @@ class CheckoutClient implements CheckoutClientInterface
 	 * @throws BadResponseException
 	 * @throws ConnectException
 	 */
-	public function get(CheckoutInterface $checkout, AccessToken $accessToken = null):? CheckoutInterface
+    function complete(CheckoutInterface $checkout, AccessToken $accessToken = null):? CheckoutInterface
 	{
-		return $this->request('get', $checkout, $accessToken, self::getScopes())? $checkout: null;
-	}
-
-
-	/**
-	 * @inheritDoc
-	 * @throws BadResponseException
-	 * @throws ConnectException
-	 */
-	public function complete(CheckoutInterface $checkout, AccessToken $accessToken = null):? CheckoutInterface
-	{
-		return $this->request('put', $checkout, $accessToken, self::getScopes())? $checkout: null;
+        return $this->request('put', $checkout) ? $checkout : null;
 	}
 
 	/**
 	 * @param string $action
 	 * @param CheckoutInterface $checkout
-	 * @param AccessToken $accessToken
-	 * @param array $scopes
+     * @param string|null $endpoint
 	 * @return bool|null
-	 * @throws BadResponseException
-	 * @throws ConnectException
 	 */
-	protected function request(string $action, CheckoutInterface $checkout, AccessToken $accessToken, array $scopes):? bool
+    function request(string $action, $checkout, string $endpoint = null):? bool
 	{
-		$accessToken = AuthenticationHelper::getValidToken($this->context, $accessToken, $scopes??self::getScopes());
-
-		$client = SumUp::getClient();
-		$options = AuthenticationHelper::getOAuthHeader($accessToken);
-		$options['form_params'] = self::getCheckoutBody($checkout);
-
-		$uri = self::ENDPOINT . '/' . $checkout->getId();
-		if($action=='post'){
-			$uri = self::ENDPOINT;
+        if (!$checkout->isValid()) {
+            throw new InvalidCheckoutException($checkout);
 		}
 
-		/** @var Response $response */
-		$response = $client->{$action}($uri, $options);
-		$this->lastResponse = $response;
-		if($response->getStatusCode() < 300 && $response->getStatusCode() >= 200){
-			$hydrator = SumUp::getHydrator();
-			$data = \GuzzleHttp\json_decode($response->getBody(), true);
-			$hydrator->hydrate($data, $checkout);
-			return true;
-		}
-
-		return false;
+        return $this->traitRequest($action, $checkout);
 	}
 
 	/**
@@ -97,7 +74,7 @@ class CheckoutClient implements CheckoutClientInterface
 	 * @param CheckoutInterface $checkout
 	 * @return array
 	 */
-	public static function getCheckoutBody(CheckoutInterface $checkout): array
+    protected static function getCheckoutBody(CheckoutInterface $checkout): array
 	{
 		return [
 			"checkout_reference" => $checkout->getReference(),
@@ -111,7 +88,12 @@ class CheckoutClient implements CheckoutClientInterface
 		];
 	}
 
-	public static function getCompleteCheckoutBody(CheckoutInterface $checkout): array
+    /**
+     * @param CheckoutInterface $checkout
+     * @param string|null $type
+     * @return array
+     */
+    static function getBody($checkout, string $type = null): array
 	{
 		$defaultBody = self::getCheckoutBody($checkout);
 		switch ($checkout->getType()) {
@@ -146,7 +128,7 @@ class CheckoutClient implements CheckoutClientInterface
 			'payment_type' => $checkout->getType(),
 			'description' => $checkout->getDescription(),
 			'boleto_details' => [
-				'cpf_cnpj' => $customer->getCpfCnpj(),
+//				'cpf_cnpj' => $customer->getCpfCnpj(),
 				'payer_name' => $customer->getName(),
 				'payer_address' => $customer->getAddress(),
 				'payer_city' => $customer->getAddress()->getCity(),
@@ -159,7 +141,7 @@ class CheckoutClient implements CheckoutClientInterface
 	/**
 	 * @inheritDoc
 	 */
-	public static function getScopes(): array
+    static function getScopes(): array
 	{
 		return [
 			'payments',
@@ -181,4 +163,59 @@ class CheckoutClient implements CheckoutClientInterface
 		return $this->context;
 	}
 
+    function getOptions(): array
+    {
+        return $this->options;
+    }
+
+    /**
+     * @param ResponseInterface $response
+     * @return SumUpClientInterface
+     */
+    function setLastResponse(ResponseInterface $response): SumUpClientInterface
+    {
+        $this->lastResponse = $response;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    function getEndPoint(): string
+    {
+        return 'checkouts';
+    }
+
+    /**
+     * @param AccessToken $token
+     * @return SumUpClientInterface
+     */
+    function setToken(AccessToken $token): SumUpClientInterface
+    {
+        $this->currentToken = $token;
+
+        return $this;
+    }
+
+    /**
+     * @return AccessToken
+     */
+    function getToken():? AccessToken
+    {
+        return $this->currentToken;
+    }
+
+    /**
+     * @param CheckoutInterface $checkout
+     * @return string
+     */
+    static function getCompleteUrl(CheckoutInterface $checkout): string
+    {
+        if ($checkout->getId()) {
+            return SumUp::getEntrypoint().$checkout->getId();
+        }
+
+        return '';
+    }
 }
