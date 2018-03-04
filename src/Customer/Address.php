@@ -246,10 +246,10 @@ class Address implements AddressInterface
 		return $this->countryNativeName;
 	}
 
-	/**
-	 * @param mixed $countryNativeName
-	 * @return Address
-	 */
+    /**
+     * @param mixed $countryNativeName
+     * @return AddressInterface
+     */
 	public function setCountryNativeName(?string $countryNativeName): AddressInterface
 	{
 		$this->countryNativeName = $countryNativeName;
@@ -258,18 +258,18 @@ class Address implements AddressInterface
 	}
 
 	/**
-	 * @return number|null
+     * @return int|null
 	 */
-	public function getRegionId():? number
+    public function getRegionId():? int
 	{
 		return $this->regionId;
 	}
 
 	/**
-	 * @param number|null $regionId
-	 * @return Address
+     * @param int|null $regionId
+     * @return AddressInterface
 	 */
-	public function setRegionId(?number $regionId): AddressInterface
+    public function setRegionId(?int $regionId): AddressInterface
 	{
 		$this->regionId = $regionId;
 

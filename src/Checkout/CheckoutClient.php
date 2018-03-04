@@ -165,7 +165,7 @@ class CheckoutClient implements CheckoutClientInterface, ClientInterface
 
     function getOptions(): array
     {
-        return $this->options;
+        return $this->options??[];
     }
 
     /**

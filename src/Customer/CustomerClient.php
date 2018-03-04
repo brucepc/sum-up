@@ -10,7 +10,6 @@ use BPCI\SumUp\OAuth\AccessToken;
 use BPCI\SumUp\SumUpClientInterface;
 use BPCI\SumUp\Traits\Client;
 use BPCI\SumUp\Traits\ClientInterface;
-use BPCI\SumUp\Utils\Hydrator;
 use Psr\Http\Message\ResponseInterface;
 
 class CustomerClient implements CustomerClientInterface, ClientInterface
@@ -76,6 +75,8 @@ class CustomerClient implements CustomerClientInterface, ClientInterface
     public function setContext(ContextInterface $context): CustomerClientInterface
 	{
 		$this->context = $context;
+
+        return $this;
 	}
 
     /**
@@ -118,7 +119,7 @@ class CustomerClient implements CustomerClientInterface, ClientInterface
         $response = $instrumentClient->disable($paymentInstrument);
         $this->setLastResponse($instrumentClient->getLastResponse());
 
-        return $response;
+        return $response??false;
     }
 
     /**
@@ -135,7 +136,7 @@ class CustomerClient implements CustomerClientInterface, ClientInterface
         $response = $instrumentClient->get();
         $this->setLastResponse($instrumentClient->getLastResponse());
 
-        return $response;
+        return $response??false;
     }
 
     /**
@@ -154,7 +155,7 @@ class CustomerClient implements CustomerClientInterface, ClientInterface
      */
     function getOptions(): array
     {
-        return $this->options;
+        return $this->options??[];
     }
 
     /**

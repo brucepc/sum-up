@@ -120,7 +120,7 @@ class PaymentInstrumentClient implements PaymentInstrumentClientInterface, Clien
      */
     function getOptions(): array
     {
-        return $this->options;
+        return $this->options??[];
     }
 
     /**

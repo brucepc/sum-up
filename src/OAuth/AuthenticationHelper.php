@@ -15,10 +15,9 @@ class AuthenticationHelper
 	 * Generate an url to merchant authorization.
 	 *
 	 * @param ContextInterface $context
-	 * @param boolean $minimal
 	 * @return string
 	 */
-	public static function getAuthorizationURL(ContextInterface $context, $minimal = true)
+    public static function getAuthorizationURL(ContextInterface $context)
 	{
 		$queryString = [
 			'client_id' => $context->getClientId(),
@@ -26,13 +25,6 @@ class AuthenticationHelper
 			'redirect_uri' => $context->getRedirectUri(),
 			'response_type' => 'code',
 		];
-
-		if (!$minimal) {
-			$queryString = array_merge($queryString, [
-				'scope' => $context->getScope(),
-				'state' => $context->getState(),
-			]);
-		}
 
 		return SumUp::ENTRYPOINT . self::OAUTH_AUTHORIZATION . '?' . http_build_query($queryString);
 	}
