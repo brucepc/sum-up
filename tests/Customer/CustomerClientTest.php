@@ -160,6 +160,54 @@ JSON
 
     function testDisablePaymentInstrument()
     {
-        //TODO create assert collection to test the action to disable a payment instrument
+        $customer = clone self::$customer;
+        $instrument = new PaymentInstrument(
+            [
+                'token' => 'fake_token_card',
+                'active' => true,
+                'type' => 'token_type',
+                'card' => [
+                    'last_4_digits' => '0000',
+                    'type' => 'card schema name',
+                ],
+            ]
+        );
+
+        $header = ['Content-Type' => 'application/json'];
+        $responseCollection = [
+            new Response(
+                204,
+                $header,
+                /** @lang JSON */
+                <<<JSON
+{
+  "token": "...",
+  "active": true,
+  "type": "...",
+  "card": {
+    "last_4_digits": "...",
+    "type": "..."
+  }
+}
+JSON
+            ),
+            new Response(
+                404,
+                $header,
+                /** @lang JSON */
+                <<<JSON
+{
+  "error_code": "NOT_FOUND",
+  "message": "Customer not found"
+}
+JSON
+            ),
+        ];
+        $options = ['handler' => HandlerStack::create(new MockHandler($responseCollection))];
+        $token = new AccessToken('FAKE_TOKEN', 'Bearer', '86000');
+        $client = new CustomerClient(self::$context, $options);
+        $client->setToken($token);
+        $this->assertNotNull($client->disablePaymentInstrument($customer, $instrument));
+        $this->assertFalse($client->disablePaymentInstrument($customer, $instrument));
     }
 }
