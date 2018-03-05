@@ -136,7 +136,7 @@ class CustomerClient implements CustomerClientInterface, ClientInterface
         $response = $instrumentClient->get();
         $this->setLastResponse($instrumentClient->getLastResponse());
 
-        return $response??false;
+        return $response??[];
     }
 
     /**

@@ -8,7 +8,6 @@ use BPCI\SumUp\OAuth\AccessToken;
 use BPCI\SumUp\SumUpClientInterface;
 use BPCI\SumUp\Traits\Client;
 use BPCI\SumUp\Traits\ClientInterface;
-use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
 
 
@@ -24,7 +23,7 @@ class PaymentInstrumentClient implements PaymentInstrumentClientInterface, Clien
      */
     protected $customer;
     /**
-     * @var Response
+     * @var ResponseInterface
      */
     protected $lastResponse;
 
@@ -60,7 +59,7 @@ class PaymentInstrumentClient implements PaymentInstrumentClientInterface, Clien
 	 */
     public function disable(PaymentInstrumentInterface $paymentInstrument):?bool
     {
-        $uri = self::getEndPoint().'/'.$paymentInstrument->getToken();
+        $uri = $this->getEndPoint().'/'.$paymentInstrument->getToken();
 
         return $this->request('delete', $paymentInstrument, $uri);
 	}
