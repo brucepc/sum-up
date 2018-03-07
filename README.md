@@ -15,7 +15,7 @@ bin/console server:run -d tests/Application/public
 | :heavy_check_mark: | Complete checkout  
 | :heavy_check_mark: | Create a new customer  
 | :heavy_check_mark: | Get payment instruments  
-| | Disable payment instrument  
+| :heavy_check_mark: | Disable payment instrument  
 | | Transaction history  
 | | Transaction details  
 | | Refound transaction  
