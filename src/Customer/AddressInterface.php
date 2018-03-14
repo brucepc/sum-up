@@ -3,16 +3,27 @@ namespace BPCI\SumUp\Customer;
 
 interface AddressInterface
 {
-    function getLine1(): ?string;
-    function setLine1(?string $line): self;
-    function getLine2(): ?string;
-    function setLine2(?string $line): self;
-    function getCountry(): ?string;
-    function setCountry(?string $country): self;
-    function getPostalCode(): ?string;
-    function setPostalCode(?string $code): self;
-    function getCity(): ?string;
-    function setCity(?string $city): self;
-    function getState(): ?string;
-    function setState(?string $state): self;
+    public function getLine1(): ?string;
+
+    public function setLine1(?string $line): self;
+
+    public function getLine2(): ?string;
+
+    public function setLine2(?string $line): self;
+
+    public function getCountry(): ?string;
+
+    public function setCountry(?string $country): self;
+
+    public function getPostalCode(): ?string;
+
+    public function setPostalCode(?string $code): self;
+
+    public function getCity(): ?string;
+
+    public function setCity(?string $city): self;
+
+    public function getState(): ?string;
+
+    public function setState(?string $state): self;
 }

@@ -15,7 +15,7 @@ interface SumUpClientInterface
      * @param ContextInterface $context
      * @param array $options
      */
-    function __construct(ContextInterface $context, ?array $options = []);
+    public function __construct(ContextInterface $context, ?array $options = []);
 
     /**
      * Shows in an array all scopes required by the client
@@ -35,38 +35,38 @@ interface SumUpClientInterface
      * Return last response of client
      * @return ResponseInterface
      */
-    function getLastResponse(): ResponseInterface;
+    public function getLastResponse(): ResponseInterface;
 
     /**
      * @param ResponseInterface $response
      * @return SumUpClientInterface
      */
-    function setLastResponse(ResponseInterface $response): SumUpClientInterface;
+    public function setLastResponse(ResponseInterface $response): SumUpClientInterface;
 
     /**
      * return the context used to created the client.
      * @return ContextInterface
      */
-    function getContext(): ContextInterface;
+    public function getContext(): ContextInterface;
 
     /**
      * @return array
      */
-    function getOptions(): array;
+    public function getOptions(): array;
 
     /**
      * @return string
      */
-    function getEndPoint(): string;
+    public function getEndPoint(): string;
 
     /**
      * @param AccessToken $token
      * @return SumUpClientInterface
      */
-    function setToken(AccessToken $token): SumUpClientInterface;
+    public function setToken(AccessToken $token): SumUpClientInterface;
 
     /**
      * @return AccessToken
      */
-    function getToken():? AccessToken;
+    public function getToken():? AccessToken;
 }

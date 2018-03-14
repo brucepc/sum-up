@@ -34,15 +34,6 @@ class CustomerClient implements CustomerClientInterface, ClientInterface
 	}
 
     /**
-     * @inheritDoc
-     * @throws BadRequestException
-     */
-    public function create(CustomerInterface $customer): ?CustomerInterface
-    {
-        return $this->request('post', $customer) ? $customer : null;
-    }
-
-    /**
      * @param $customer
      * @param string|null $type
      * @return array
@@ -72,13 +63,6 @@ class CustomerClient implements CustomerClientInterface, ClientInterface
         return $body;
     }
 
-    public function setContext(ContextInterface $context): CustomerClientInterface
-	{
-		$this->context = $context;
-
-        return $this;
-	}
-
     /**
      * @inheritDoc
      */
@@ -89,19 +73,29 @@ class CustomerClient implements CustomerClientInterface, ClientInterface
         ];
     }
 
-	function getLastResponse(): ResponseInterface
+    /**
+     * @inheritDoc
+     * @throws BadRequestException
+     */
+    public function create(CustomerInterface $customer): ?CustomerInterface
+    {
+        return $this->request('post', $customer) ? $customer : null;
+    }
+
+    public function getLastResponse(): ResponseInterface
 	{
 		return $this->lastResponse;
 	}
 
+    /**
+     * @param ResponseInterface $response
+     * @return SumUpClientInterface
+     */
+    public function setLastResponse(ResponseInterface $response): SumUpClientInterface
+    {
+        $this->lastResponse = $response;
 
-	/**
-	 * return the context used to created the client.
-	 * @return ContextInterface
-	 */
-	function getContext(): ContextInterface
-	{
-        return $this->context;
+        return $this;
     }
 
     /**
@@ -111,7 +105,10 @@ class CustomerClient implements CustomerClientInterface, ClientInterface
      * @param PaymentInstrumentInterface $paymentInstrument
      * @return bool
      */
-    function disablePaymentInstrument(CustomerInterface $customer, PaymentInstrumentInterface $paymentInstrument): bool
+    public function disablePaymentInstrument(
+        CustomerInterface $customer,
+        PaymentInstrumentInterface $paymentInstrument
+    ): bool
     {
         $instrumentClient = new PaymentInstrumentClient($this->getContext(), $this->getOptions());
         $instrumentClient->setCustomer($customer);
@@ -123,12 +120,55 @@ class CustomerClient implements CustomerClientInterface, ClientInterface
     }
 
     /**
+     * return the context used to created the client.
+     * @return ContextInterface
+     */
+    public function getContext(): ContextInterface
+    {
+        return $this->context;
+    }
+
+    public function setContext(ContextInterface $context): CustomerClientInterface
+    {
+        $this->context = $context;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOptions(): array
+    {
+        return $this->options??[];
+    }
+
+    /**
+     * @return AccessToken
+     */
+    public function getToken():? AccessToken
+    {
+        return $this->token;
+    }
+
+    /**
+     * @param AccessToken $token
+     * @return SumUpClientInterface
+     */
+    public function setToken(AccessToken $token): SumUpClientInterface
+    {
+        $this->token = $token;
+
+        return $this;
+    }
+
+    /**
      * This must return an Array of PaymentInstrumentInterface
      *
      * @param CustomerInterface $customer
      * @return array
      */
-    function getPaymentInstruments(CustomerInterface $customer): array
+    public function getPaymentInstruments(CustomerInterface $customer): array
     {
         $instrumentClient = new PaymentInstrumentClient($this->getContext(), $this->getOptions());
         $instrumentClient->setCustomer($customer);
@@ -140,48 +180,10 @@ class CustomerClient implements CustomerClientInterface, ClientInterface
     }
 
     /**
-     * @param ResponseInterface $response
-     * @return SumUpClientInterface
-     */
-    function setLastResponse(ResponseInterface $response): SumUpClientInterface
-    {
-        $this->lastResponse = $response;
-
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    function getOptions(): array
-    {
-        return $this->options??[];
-    }
-
-    /**
      * @return string
      */
-    function getEndPoint(): string
+    public function getEndPoint(): string
     {
         return 'customers';
     }
-
-    /**
-     * @param AccessToken $token
-     * @return SumUpClientInterface
-     */
-    function setToken(AccessToken $token): SumUpClientInterface
-    {
-        $this->token = $token;
-
-        return $this;
-    }
-
-    /**
-     * @return AccessToken
-     */
-    function getToken():? AccessToken
-    {
-        return $this->token;
-	}
 }

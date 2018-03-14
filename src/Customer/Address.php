@@ -81,7 +81,7 @@ class Address implements AddressInterface
 	 * Address constructor.
 	 * @param array|null $data
 	 */
-	function __construct(?array $data = [])
+    public function __construct(?array $data = [])
 	{
 		$this->setAddressLine1($data['address_line1']??null);
 		$this->setAddressLine2($data['address_line2']??null);

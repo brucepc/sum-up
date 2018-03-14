@@ -11,9 +11,9 @@ namespace BPCI\SumUp\Traits;
 
 interface PropertyHandlerInterface
 {
-    function fillProperties(array $data): void;
+    public function fillProperties(array $data): void;
 
-    function fillProperty(string $property, $value): void;
+    public function fillProperty(string $property, $value): void;
 
-    function getPropertyArray(): array;
+    public function getPropertyArray(): array;
 }

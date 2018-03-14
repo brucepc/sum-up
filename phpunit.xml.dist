@@ -5,7 +5,14 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/6.3/phpunit.xsd"
         backupGlobals="false"
+        backupStaticAttributes="false"
         colors="true"
+        convertErrorsToExceptions="true"
+        convertNoticesToExceptions="true"
+        convertWarningsToExceptions="true"
+        processIsolation="false"
+        stopOnFailure="false"
+        syntaxCheck="false"
         bootstrap="vendor/autoload.php"
 >
     <php>
@@ -13,11 +20,19 @@
     </php>
 
     <testsuites>
-        <testsuite name="SumUp Test Suite">
-            <directory suffix="Test.php">tests</directory>
-            <exclude>
-                <directory>Application</directory>
-            </exclude>
+        <testsuite name="Sumup">
+            <directory suffix="Test.php">tests/Checkout</directory>
+            <directory suffix="Test.php">tests/Customer</directory>
+            <directory suffix="Test.php">tests/OAuth</directory>
+            <directory suffix="Test.php">tests/Traits</directory>
+            <directory suffix="Test.php">tests/Utils</directory>
+            <file>tests/ContextTest.php</file>
+            <file>tests/SumUpTest.php</file>
+        </testsuite>
+
+        <!-- Payum suite -->
+        <testsuite name="Payum">
+            <directory suffix="Test.php">tests/Payum</directory>
         </testsuite>
     </testsuites>
 

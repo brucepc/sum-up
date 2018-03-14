@@ -76,6 +76,16 @@ class Checkout implements CheckoutInterface, PropertyHandlerInterface
 		}
 	}
 
+    /**
+     * @inheritDoc
+     */
+    public function setCheckoutReference(string $reference): CheckoutInterface
+    {
+        $this->reference = trim($reference) === '' ? null : $reference;
+
+        return $this;
+    }
+
 	/**
 	 * @inheritDoc
 	 */
@@ -88,32 +98,26 @@ class Checkout implements CheckoutInterface, PropertyHandlerInterface
 	}
 
 	/**
-	 * @inheritDoc
+     * Get checkout reference
+     *
+     * @return  string
 	 */
-	public function getId():? string {
-		return $this->id;
+    public function getReference(): ?string
+    {
+        return $this->reference;
 	}
 
 	/**
-	 * @inheritDoc
+     * Set checkout reference
+     *
+     * @param  string $reference Checkout reference
+     *
+     * @return  CheckoutInterface
 	 */
-	public function setId(?string $id): CheckoutInterface {
-		$this->id = $id;
-		return $this;
-	}
+    public function setReference(?string $reference): CheckoutInterface
+    {
+        $this->reference = $reference;
 
-	/**
-	 * @inheritDoc
-	 */
-	public function getStatus():? string {
-		return $this->status;
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public function setStatus(?string $status): CheckoutInterface {
-		$this->status = $status;
 		return $this;
 	}
 
@@ -131,6 +135,24 @@ class Checkout implements CheckoutInterface, PropertyHandlerInterface
 		$this->amount = $amount > 0 ? $amount : null;
 		return $this;
 	}
+
+    /**
+     * @inheritDoc
+     */
+    public function getPayToEmail():? string
+    {
+        return $this->payToEmail;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setPayToEmail(string $email): CheckoutInterface
+    {
+        $this->payToEmail = trim($email) === '' ? null : $email;
+
+        return $this;
+    }
 
 	/**
 	 * @inheritDoc
@@ -150,32 +172,44 @@ class Checkout implements CheckoutInterface, PropertyHandlerInterface
 	/**
 	 * @inheritDoc
 	 */
-	public function getPayToEmail():? string {
-		return $this->payToEmail;
+    public function getId():? string
+    {
+        return $this->id;
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function setPayToEmail(string $email): CheckoutInterface {
-		$this->payToEmail = trim($email) === '' ? null : $email;
+    public function setId(?string $id): CheckoutInterface
+    {
+        $this->id = $id;
 		return $this;
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function getCheckoutReference():? string {
-		return $this->reference;
+    public function getStatus():? string
+    {
+        return $this->status;
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function setCheckoutReference(string $reference): CheckoutInterface {
-		$this->reference = trim($reference) === '' ? null : $reference;
+    public function setStatus(?string $status): CheckoutInterface
+    {
+        $this->status = $status;
 		return $this;
 	}
+
+    /**
+     * @inheritDoc
+     */
+    public function getCheckoutReference():? string
+    {
+        return $this->reference;
+    }
 
 	/**
 	 * @inheritDoc
@@ -237,50 +271,60 @@ class Checkout implements CheckoutInterface, PropertyHandlerInterface
 		return $this;
 	}
 
-	function getValidUntil():? string {
+    public function getValidUntil():? string
+    {
 		return $this->validUntil;
 	}
 
-	function setValidUntil(?string $timestamp): CheckoutInterface {
+    public function setValidUntil(?string $timestamp): CheckoutInterface
+    {
 		$this->validUntil = $timestamp;
 		return $this;
 	}
 
-	function getTransactionCode():? string {
+    public function getTransactionCode():? string
+    {
 		return $this->transactionCode;
 	}
 
-	function setTransactionCode(?string $code): CheckoutInterface {
+    public function setTransactionCode(?string $code): CheckoutInterface
+    {
 		$this->transactionCode = $code;
 		return $this;
 	}
 
-	function getTransactionId():? string {
+    public function getTransactionId():? string
+    {
 		return $this->transactionId;
 	}
 
-	function setTransactionId(?string $id): CheckoutInterface {
+    public function setTransactionId(?string $id): CheckoutInterface
+    {
 		$this->transactionId = $id;
 		return $this;
 	}
 
-	function getTransactions():? array {
+    public function getTransactions():? array
+    {
 //        return $this->transactions;
 		//TODO remember myself whats is it.
 		return [];
 	}
 
-	function setTransactions(?Array $transactions): CheckoutInterface {
+    public function setTransactions(?Array $transactions): CheckoutInterface
+    {
 //        $this->transactions = $transactions;
 		//TODO remember myself whats is it.
 		return $this;
 	}
 
-	function getToken():? string {
+    public function getToken():? string
+    {
 		return $this->token;
 	}
 
-	function setToken(?string $token): CheckoutInterface {
+    public function setToken(?string $token): CheckoutInterface
+    {
 		$this->token = $token;
 		return $this;
 	}
@@ -333,30 +377,6 @@ class Checkout implements CheckoutInterface, PropertyHandlerInterface
 	}
 
 	/**
-	 * Get checkout reference
-	 *
-	 * @return  string
-	 */
-	public function getReference(): ?string
-	{
-		return $this->reference;
-	}
-
-	/**
-	 * Set checkout reference
-	 *
-	 * @param  string  $reference  Checkout reference
-	 *
-	 * @return  CheckoutInterface
-	 */
-	public function setReference(?string $reference): CheckoutInterface
-	{
-		$this->reference = $reference;
-
-		return $this;
-	}
-
-	/**
 	 * @return mixed
 	 */
 	public function getType():? string
@@ -375,14 +395,14 @@ class Checkout implements CheckoutInterface, PropertyHandlerInterface
 		return $this;
 	}
 
+    public function getInstallments(): string
+    {
+        return $this->installments;
+    }
+
 	public function setInstallments(?string $installments): CheckoutInterface{
 		$this->installments = $installments;
 		return $this;
-	}
-
-	public function getInstallments(): string
-	{
-		return $this->installments;
 	}
 
 }

@@ -27,11 +27,32 @@ class PaymentInstrumentClient implements PaymentInstrumentClientInterface, Clien
      */
     protected $lastResponse;
 
+    /**
+     * CheckoutClientInterface constructor.
+     * @param ContextInterface $context
+     * @param array $options
+     */
+    public function __construct(ContextInterface $context, ?array $options = [])
+    {
+        $this->context = $context;
+        $this->options = $options;
+    }
+
     static function getScopes(): array
     {
         return [
             'payment_instruments'
         ];
+    }
+
+    /**
+     * @param PaymentInstrumentInterface $object
+     * @param string|null $type
+     * @return mixed
+     */
+    static function getBody($object, string $type = null)
+    {
+        return null;
     }
 
 	/**
@@ -64,50 +85,28 @@ class PaymentInstrumentClient implements PaymentInstrumentClientInterface, Clien
         return $this->request('delete', $paymentInstrument, $uri);
 	}
 
-	/**
-	 * CheckoutClientInterface constructor.
-	 * @param ContextInterface $context
-     * @param array $options
+    /**
+     * @return string
      */
-    public function __construct(ContextInterface $context, ?array $options = [])
-	{
-        $this->context = $context;
-        $this->options = $options;
-	}
+    public function getEndPoint(): string
+    {
+        return 'customers/'.$this->customer->getCustomerId().'/payment-instruments';
+    }
 
 	/**
 	 * Return last response of client
 	 * @return ResponseInterface
 	 */
-	function getLastResponse(): ResponseInterface
+    public function getLastResponse(): ResponseInterface
 	{
         return $this->lastResponse;
 	}
-
-	/**
-	 * return the context used to created the client.
-	 * @return ContextInterface
-	 */
-	function getContext(): ContextInterface
-	{
-        return $this->context;
-	}
-
-    /**
-     * @param PaymentInstrumentInterface $object
-     * @param string|null $type
-     * @return mixed
-     */
-    static function getBody($object, string $type = null)
-    {
-        return null;
-    }
 
     /**
      * @param ResponseInterface $response
      * @return SumUpClientInterface
      */
-    function setLastResponse(ResponseInterface $response): SumUpClientInterface
+    public function setLastResponse(ResponseInterface $response): SumUpClientInterface
     {
         $this->lastResponse = $response;
 
@@ -115,26 +114,35 @@ class PaymentInstrumentClient implements PaymentInstrumentClientInterface, Clien
     }
 
     /**
+     * return the context used to created the client.
+     * @return ContextInterface
+     */
+    public function getContext(): ContextInterface
+    {
+        return $this->context;
+    }
+
+    /**
      * @return array
      */
-    function getOptions(): array
+    public function getOptions(): array
     {
         return $this->options??[];
     }
 
     /**
-     * @return string
+     * @return AccessToken
      */
-    function getEndPoint(): string
+    public function getToken():? AccessToken
     {
-        return 'customers/'.$this->customer->getCustomerId().'/payment-instruments';
+        return $this->token;
     }
 
     /**
      * @param AccessToken $token
      * @return SumUpClientInterface
      */
-    function setToken(AccessToken $token): SumUpClientInterface
+    public function setToken(AccessToken $token): SumUpClientInterface
     {
         $this->token = $token;
 
@@ -142,11 +150,11 @@ class PaymentInstrumentClient implements PaymentInstrumentClientInterface, Clien
     }
 
     /**
-     * @return AccessToken
+     * @return CustomerInterface
      */
-    function getToken():? AccessToken
+    public function getCustomer(): CustomerInterface
     {
-        return $this->token;
+        return $this->customer;
     }
 
     /**
@@ -159,12 +167,4 @@ class PaymentInstrumentClient implements PaymentInstrumentClientInterface, Clien
 
         return $this;
     }
-
-    /**
-     * @return CustomerInterface
-     */
-    public function getCustomer(): CustomerInterface
-    {
-        return $this->customer;
-	}
 }

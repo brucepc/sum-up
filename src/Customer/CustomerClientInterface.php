@@ -12,19 +12,19 @@ interface CustomerClientInterface extends SumUpClientInterface
      * @param CustomerInterface $customer
      * @return CustomerInterface
      */
-    function create(CustomerInterface $customer):? CustomerInterface;
+    public function create(CustomerInterface $customer):? CustomerInterface;
 
     /**
      * @param CustomerInterface $customer
      * @return array
      */
-    function getPaymentInstruments(CustomerInterface $customer): array;
+    public function getPaymentInstruments(CustomerInterface $customer): array;
 
     /**
      * @param CustomerInterface $customer
      * @param PaymentInstrumentInterface $instrument
      * @return bool
      */
-    function disablePaymentInstrument(CustomerInterface $customer, PaymentInstrumentInterface $instrument): bool;
+    public function disablePaymentInstrument(CustomerInterface $customer, PaymentInstrumentInterface $instrument): bool;
 
 }

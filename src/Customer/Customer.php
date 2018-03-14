@@ -32,7 +32,7 @@ class Customer implements CustomerInterface
 	 */
 	protected $address;
 
-	function __construct(?array $data = [])
+    public function __construct(?array $data = [])
 	{
 		$this->setCustomerId($data['customer_id']??null);
 		$personal_details = $data['personal_details']??$data;

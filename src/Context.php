@@ -61,7 +61,7 @@ class Context implements ContextInterface
      */
     private $corsUris;
 
-    function __construct(Array $context = [])
+    public function __construct(Array $context = [])
     {
         $this->id = $context['id'] ?? null;
         $this->name = $context['name'] ?? null;
@@ -112,18 +112,7 @@ class Context implements ContextInterface
         'cors_uris' => $this->getCorsUris()
         ];
     }
-    /**
-     * Set Index of URI to use on requests
-     *
-     * @param int $index
-     * @return ContextInterface
-     */
-    public function setIndexUri(int $index): ContextInterface
-    {
-        $this->uriIndexToUse = $index;
-        return $this;
-    }
-    
+
     public function getId()
     {
         return $this->id;
@@ -153,15 +142,28 @@ class Context implements ContextInterface
     {
         return $this->redirectUris;
     }
-
-    public function getRedirectUri()
-    {
-        return $this->redirectUris[$this->uriIndexToUse];
-    }
     
     public function getCorsUris()
     {
         return $this->corsUris;
+    }
+
+    /**
+     * Set Index of URI to use on requests
+     *
+     * @param int $index
+     * @return ContextInterface
+     */
+    public function setIndexUri(int $index): ContextInterface
+    {
+        $this->uriIndexToUse = $index;
+
+        return $this;
+    }
+
+    public function getRedirectUri()
+    {
+        return $this->redirectUris[$this->uriIndexToUse];
     }
 
 }

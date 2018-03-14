@@ -4,16 +4,26 @@ namespace BPCI\SumUp;
 
 interface ContextInterface
 {
-    function __construct(Array $context);
+    public function __construct(Array $context);
     static function loadContextFromFile(string $filePath): self;
-    function getContextData(): Array;
-    function setIndexUri(int $index): self;
-    function getId();
-    function getName();
-    function getClientId();
-    function getClientSecret();
-    function getApplicationType();
-    function getRedirectUris();
-    function getRedirectUri();
-    function getCorsUris();
+
+    public function getContextData(): Array;
+
+    public function setIndexUri(int $index): self;
+
+    public function getId();
+
+    public function getName();
+
+    public function getClientId();
+
+    public function getClientSecret();
+
+    public function getApplicationType();
+
+    public function getRedirectUris();
+
+    public function getRedirectUri();
+
+    public function getCorsUris();
 }

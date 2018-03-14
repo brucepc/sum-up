@@ -29,7 +29,7 @@ trait Client
      * @throws BadResponseException
      * @throws ConnectException
      */
-    function request(string $action, $object = null, string $endpoint = null):? bool
+    public function request(string $action, $object = null, string $endpoint = null):? bool
     {
         /** @var SumUpClientInterface $this */
 

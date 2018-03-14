@@ -13,208 +13,209 @@ interface CheckoutInterface
 	/**
 	 * @return null|string
 	 */
-	function getId(): ?string;
+    public function getId(): ?string;
 
 	/**
 	 * @param string $id
 	 * @return CheckoutInterface
 	 */
-	function setId(string $id): self;
+    public function setId(string $id): self;
 
 	/**
 	 * @return null|string
 	 */
-	function getStatus(): ?string;
+    public function getStatus(): ?string;
 
 	/**
 	 * @param string $status
 	 * @return CheckoutInterface
 	 */
-	function setStatus(string $status): self;
+    public function setStatus(string $status): self;
 
 
 	/**
 	 * @param float $amount
 	 * @return CheckoutInterface
 	 */
-	function setAmount(float $amount): self;
+    public function setAmount(float $amount): self;
 
 	/**
 	 * @return float
 	 */
-	function getAmount():? float;
+    public function getAmount():? float;
 
 	/**
 	 * @return float|null
 	 */
-    function getFeeAmount():? float;
+    public function getFeeAmount():? float;
 
 	/**
 	 * @param float $amount
 	 * @return CheckoutInterface
 	 */
-	function setFeeAmount(float $amount): self;
+    public function setFeeAmount(float $amount): self;
 
 	/**
 	 * @return null|string
 	 */
-	function getCurrency(): ?string;
+    public function getCurrency(): ?string;
 
 	/**
 	 * @param string $currency
 	 * @return CheckoutInterface
 	 */
-	function setCurrency(string $currency): self;
+    public function setCurrency(string $currency): self;
 
 	/**
 	 * @return CustomerInterface|null
 	 */
-	function getCustomer(): ?CustomerInterface;
+    public function getCustomer(): ?CustomerInterface;
 
 	/**
 	 * @param CustomerInterface $customer
 	 * @return CheckoutInterface
 	 */
-	function setCustomer(CustomerInterface $customer): self;
+    public function setCustomer(CustomerInterface $customer): self;
 
 	/**
      * @return PaymentInstrumentInterface|null
 	 */
-    function getCard(): ?PaymentInstrumentInterface;
+    public function getCard(): ?PaymentInstrumentInterface;
 
 	/**
      * @param PaymentInstrumentInterface $card
 	 * @return CheckoutInterface
 	 */
-    function setCard(PaymentInstrumentInterface $card): self;
+    public function setCard(PaymentInstrumentInterface $card): self;
 
 	/**
 	 * @return null|string
 	 */
-	function getPayToEmail(): ?string;
+    public function getPayToEmail(): ?string;
 
 	/**
 	 * @param string $email
 	 * @return CheckoutInterface
 	 */
-	function setPayToEmail(string $email): self;
+    public function setPayToEmail(string $email): self;
 
 	/**
 	 * @return null|string
 	 */
-	function getPayFromEmail(): ?string;
+    public function getPayFromEmail(): ?string;
 
 	/**
 	 * @param string $email
 	 * @return CheckoutInterface
 	 */
-	function setPayFromEmail(string $email): self;
+    public function setPayFromEmail(string $email): self;
 
 	/**
 	 * @return null|string
 	 */
-	function getReference(): ?string;
+    public function getReference(): ?string;
 
 	/**
 	 * @param string $reference
 	 * @return CheckoutInterface
 	 */
-	function setReference(string $reference): self;
+    public function setReference(string $reference): self;
 
 	/**
 	 * @return null|string
 	 */
-	function getDescription(): ?string;
+    public function getDescription(): ?string;
 
 	/**
 	 * @param string $description
 	 * @return CheckoutInterface
 	 */
-	function setDescription(string $description): self;
+    public function setDescription(string $description): self;
 
 	/**
 	 * @return null|string
 	 */
-	function getRedirectUrl(): ?string;
+    public function getRedirectUrl(): ?string;
 
 	/**
 	 * @param string $url
 	 * @return CheckoutInterface
 	 */
-	function setRedirectUrl(string $url): self;
+    public function setRedirectUrl(string $url): self;
 
 	/**
 	 * @return string
 	 */
-	function getValidUntil():? string;
+    public function getValidUntil():? string;
 
 	/**
 	 * @param string $timestamp
 	 * @return CheckoutInterface
 	 */
-	function setValidUntil(string $timestamp): self;
+    public function setValidUntil(string $timestamp): self;
 
 	/**
 	 * @return null|string
 	 */
-	function getTransactionCode(): ?string;
+    public function getTransactionCode(): ?string;
 
 	/**
 	 * @param string $code
 	 * @return CheckoutInterface
 	 */
-	function setTransactionCode(string $code): self;
+    public function setTransactionCode(string $code): self;
 
 	/**
 	 * @return null|string
 	 */
-	function getTransactionId(): ?string;
+    public function getTransactionId(): ?string;
 
 	/**
 	 * @param string $id
 	 * @return CheckoutInterface
 	 */
-	function setTransactionId(string $id): self;
+    public function setTransactionId(string $id): self;
 
 	/**
 	 * @return array|null
 	 */
-	function getTransactions(): ?array;
+    public function getTransactions(): ?array;
 
 	/**
 	 * @param array $transactions
 	 * @return CheckoutInterface
 	 */
-	function setTransactions(array $transactions): self;
+    public function setTransactions(array $transactions): self;
 
 	/**
 	 * @return null|string
 	 */
-	function getToken(): ?string;
+    public function getToken(): ?string;
 
 	/**
 	 * @param string $token
 	 * @return CheckoutInterface
 	 */
-	function setToken(string $token): self;
+    public function setToken(string $token): self;
 
 	/**
      * @return bool
 	 */
-    function isValid(): bool;
+    public function isValid(): bool;
 
 	/**
 	 * @param string|null $type
 	 * @return CheckoutInterface
 	 */
-	function setType(string $type = null): self;
+    public function setType(string $type = null): self;
 
 	/**
 	 * @return null|string
 	 */
-	function getType():? string;
+    public function getType():? string;
 
-	function setInstallments(?string $installments):? self;
-	function getInstallments():? string;
+    public function setInstallments(?string $installments):? self;
+
+    public function getInstallments():? string;
 
 }

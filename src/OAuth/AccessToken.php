@@ -20,7 +20,8 @@ class AccessToken
      * @param integer $expiresIn
      * @param string|null $scope
      */
-    function __construct(string $token, string $type, int $expiresIn, string $scope = null){
+    public function __construct(string $token, string $type, int $expiresIn, string $scope = null)
+    {
         $this->token = $token;
         $this->type = $type;
         $this->expiration = time() + $expiresIn;
@@ -35,7 +36,7 @@ class AccessToken
      *
      * @return boolean
      */
-    function isValid(): bool
+    public function isValid(): bool
     {
         return $this->getToken() !== '' && time() < $this->expiration;
     }
@@ -45,7 +46,7 @@ class AccessToken
      *
      * @return string
      */
-    function getToken(): string
+    public function getToken(): string
     {
         return $this->token;
     }
@@ -55,7 +56,7 @@ class AccessToken
      *
      * @return string
      */
-    function getType(): string
+    public function getType(): string
     {
         return $this->type;
     }
@@ -65,7 +66,7 @@ class AccessToken
      *
      * @return integer
      */
-    function getExpiration(): int
+    public function getExpiration(): int
     {
         return $this->expiration;
     }
@@ -75,7 +76,7 @@ class AccessToken
      *
      * @return array
      */
-    function getScope(): array
+    public function getScope(): array
     {
         return $this->scope;
     }
@@ -86,7 +87,8 @@ class AccessToken
      * @param string $scope[,$scope[,$scope[,...]]]
      * @return boolean
      */
-    function canAccess(string $scope){
+    public function canAccess(string $scope)
+    {
         $scopes = func_get_args();
         $diff = array_diff($scopes, $this->scope);
         return count($diff)>0;

@@ -17,5 +17,5 @@ interface ClientInterface
      * @param string|null $endpoint
      * @return bool|null
      */
-    function request(string $action, $object, string $endpoint = null):? bool;
+    public function request(string $action, $object, string $endpoint = null):? bool;
 }

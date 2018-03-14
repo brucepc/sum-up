@@ -54,6 +54,35 @@ class PaymentInstrument implements PaymentInstrumentInterface
     }
 
     /**
+     * Set PaymentInstrument array
+     *
+     * @see http://docs.sumup.com/rest-api/checkouts-api/#customers-payment-instruments-post
+     * @param array $data
+     * @return PaymentInstrumentInterface
+     */
+    public function setCard(?array $data): PaymentInstrumentInterface
+    {
+        $this->setLast4Digits($data['last_4_digits']);
+        $this->setCardType($data['type']);
+
+        return $this;
+    }
+
+    /**
+     * Set PaymentInstrument Schema
+     *
+     * @param  string $cardSchema PaymentInstrument Schema
+     *
+     * @return PaymentInstrumentInterface
+     */
+    public function setCardType(?string $cardSchema): PaymentInstrumentInterface
+    {
+        $this->cardSchema = $cardSchema;
+
+        return $this;
+    }
+
+    /**
      * Get token
      *
      * @return  string
@@ -85,6 +114,14 @@ class PaymentInstrument implements PaymentInstrumentInterface
     public function getActive():? bool
     {
         return $this->active;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isActive(): bool
+    {
+        return $this->active??false;
     }
 
     /**
@@ -126,6 +163,24 @@ class PaymentInstrument implements PaymentInstrumentInterface
     }
 
     /**
+     * Get PaymentInstrument array
+     * e.g.: [
+     *     'last_4_digits' => '0000',
+     *     'type'          => 'PaymentInstrument Schema'
+     * ]
+     *
+     * @see http://docs.sumup.com/rest-api/checkouts-api/#customers-payment-instruments-post
+     * @return array
+     */
+    public function getCard():? array
+    {
+        return [
+            'last_4_digits' => $this->getLast4Digits(),
+            'type' => $this->getCardType(),
+        ];
+    }
+
+    /**
      * Get last 4 digits of card
      *
      * @return  string
@@ -157,59 +212,5 @@ class PaymentInstrument implements PaymentInstrumentInterface
     public function getCardType():? string
     {
         return $this->cardSchema;
-    }
-
-    /**
-     * Set PaymentInstrument Schema
-     *
-     * @param  string $cardSchema PaymentInstrument Schema
-     *
-     * @return PaymentInstrumentInterface
-     */
-    public function setCardType(?string $cardSchema): PaymentInstrumentInterface
-    {
-        $this->cardSchema = $cardSchema;
-
-        return $this;
-    }
-
-    /**
-     * Get PaymentInstrument array
-     * e.g.: [
-     *     'last_4_digits' => '0000',
-     *     'type'          => 'PaymentInstrument Schema'
-     * ]
-     *
-     * @see http://docs.sumup.com/rest-api/checkouts-api/#customers-payment-instruments-post
-     * @return array
-     */
-    public function getCard():? array
-    {
-        return [
-            'last_4_digits' => $this->getLast4Digits(),
-            'type' => $this->getCardType(),
-        ];
-    }
-
-    /**
-     * Set PaymentInstrument array
-     *
-     * @see http://docs.sumup.com/rest-api/checkouts-api/#customers-payment-instruments-post
-     * @param array $data
-     * @return PaymentInstrumentInterface
-     */
-    public function setCard(?array $data): PaymentInstrumentInterface
-    {
-        $this->setLast4Digits($data['last_4_digits']);
-        $this->setCardType($data['type']);
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    function isActive(): bool
-    {
-        return $this->active??false;
     }
 }
