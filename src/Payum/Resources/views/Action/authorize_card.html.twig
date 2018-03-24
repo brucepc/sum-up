@@ -1,0 +1,21 @@
+{% extends layout ?: "@PayumCore/layout.html.twig" %}
+
+{% block payum_body %}
+    {{ parent() }}
+    <card></card>
+{% endblock %}
+
+{% block payum_javascripts %}
+    {{ parent() }}
+
+    <script src="https://gateway.sumup.com/gateway/card.js"></script>
+    <script>
+        //render the form ui providing a configuration object
+        PaymentCard.mount({checkoutId: "{{ model.id }}"});
+        //listen to checkout processing result and handle it
+        PaymentCard.on('checkout:paymentResult', function (data) {
+            //TODO: handle the checkout result
+        })
+    </script>
+
+{% endblock %}

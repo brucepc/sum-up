@@ -9,7 +9,6 @@ doctrine:
     dbal:
         # configure these for your database server
         driver: 'pdo_sqlite'
-        # server_version: '5.7'
         charset: utf8mb4
 
         # With Symfony 3.3, remove the `resolve:` prefix
@@ -24,4 +23,4 @@ doctrine:
                 type: annotation
                 dir: '%kernel.project_dir%/src/Entity'
                 prefix: 'BPCI\SumUp\Tests\Entity'
-                alias: App
+                alias: BPCISumUp

@@ -8,6 +8,7 @@
 
 namespace BPCI\SumUp\Traits;
 
+use BPCI\SumUp\Exception\BadRequestException;
 use BPCI\SumUp\OAuth\AuthenticationHelper;
 use BPCI\SumUp\SumUp;
 use BPCI\SumUp\SumUpClientInterface;
@@ -54,6 +55,8 @@ trait Client
             $response = $client->{$action}($uri, $options);
         } catch (RequestException $e) {
             $response = $e->getResponse();
+            $this->setLastResponse($response);
+            throw new BadRequestException($e->getMessage(), $e->getCode());
         }
         $this->setLastResponse($response);
         $statusCode = $response->getStatusCode();
@@ -66,6 +69,5 @@ trait Client
             return true;
         }
 
-        return false;
     }
 }

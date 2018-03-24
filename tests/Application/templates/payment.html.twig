@@ -1,0 +1,13 @@
+{% form_theme form 'bootstrap_4_layout.html.twig' %}
+{% extends 'base.html.twig' %}
+{% block title %}New Payment{% endblock %}
+{% block body %}
+    {% if payment %}
+        {{ dump(payment) }}
+        <a href="{{ path('sumup_payum_payment') }}">New Payment</a>
+    {% else %}
+        {{ form_start(form) }}
+        {{ form_row(form) }}
+        {{ form_end(form) }}
+    {% endif %}
+{% endblock %}

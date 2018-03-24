@@ -8,7 +8,11 @@ use BPCI\SumUp\Customer\PaymentInstrument\PaymentInstrumentInterface;
 use BPCI\SumUp\Traits\PropertyHandler;
 use BPCI\SumUp\Traits\PropertyHandlerInterface;
 use BPCI\SumUp\Utils\Currency;
+use Payum\Core\Model\CreditCardInterface;
 
+/**
+ * @method array getDetails()
+ */
 class Checkout implements CheckoutInterface, PropertyHandlerInterface
 {
 	use PropertyHandler;
@@ -405,4 +409,66 @@ class Checkout implements CheckoutInterface, PropertyHandlerInterface
 		return $this;
 	}
 
+    /**
+     * @return CreditCardInterface|null
+     */
+    public function getCreditCard()
+    {
+        return null;
+    }
+
+    /**
+     * @param object $details
+     *
+     * @return void
+     */
+    public function setDetails($details)
+    {
+        $this->setDescription($details);
+    }
+
+    /**
+     * @return string
+     */
+    public function getNumber()
+    {
+
+    }
+
+    /**
+     * @return string
+     */
+    public function getClientEmail()
+    {
+        // TODO: Implement getClientEmail() method.
+    }
+
+    /**
+     * @return string
+     */
+    public function getClientId()
+    {
+        // TODO: Implement getClientId() method.
+    }
+
+    /**
+     * @return int
+     */
+    public function getTotalAmount()
+    {
+        // TODO: Implement getTotalAmount() method.
+    }
+
+    /**
+     * @return string
+     */
+    public function getCurrencyCode()
+    {
+        // TODO: Implement getCurrencyCode() method.
+    }
+
+    function __call($name, $arguments)
+    {
+        // TODO: Implement @method array getDetails()
+    }
 }

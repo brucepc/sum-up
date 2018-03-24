@@ -1,0 +1,11 @@
+payum:
+  security:
+    token_storage:
+      BPCI\SumUp\Tests\Entity\PaymentToken: { doctrine: orm }
+  storages:
+    BPCI\SumUp\Tests\Entity\Payment: { doctrine: orm }
+  gateways:
+    sumup_checkout:
+      factory: sumup_checkout
+      client_credential: "%kernel.project_dir%/var/sumup.json"
+      pay_to_email: brucepc@sumup.com

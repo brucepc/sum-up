@@ -122,11 +122,11 @@ class CheckoutClient implements CheckoutClientInterface, ClientInterface
      */
     static function getCompleteUrl(CheckoutInterface $checkout): string
     {
+        //TODO Remove this method don't make sense.
         if ($checkout->getId()) {
-            return SumUp::getEntrypoint().$checkout->getId();
+            return sprintf('%s/%s', SumUp::getEntrypoint(), $checkout->getId());
         }
 
-        return '';
     }
 
     /**

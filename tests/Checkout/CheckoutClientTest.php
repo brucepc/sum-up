@@ -34,7 +34,7 @@ class CheckoutClientTest extends TestCase
         $id = uniqid();
         $checkout = new Checkout(['id' => $id]);
         $url_generated = CheckoutClient::getCompleteUrl($checkout);
-        $url = SumUp::getEntrypoint().$id;
+        $url = SumUp::getEntrypoint().'/'.$id;
         $this->assertEquals($url, $url_generated);
     }
 

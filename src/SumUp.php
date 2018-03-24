@@ -9,6 +9,10 @@ class SumUp
 {
 	const VERSION = 'v0.1';
 	const ENTRYPOINT = 'https://api.sumup.com/';
+    const CLIENT_DEFAULT_OPTIONS = [
+        'base_uri' => self::ENTRYPOINT.self::VERSION.'/',
+        'timeout' => 5,
+    ];
 
 	/**
      * @param array $options
@@ -17,10 +21,7 @@ class SumUp
     static function getClient(array $options = []): ClientInterface
 	{
         $options = array_merge_recursive(
-			[
-				'base_uri' => self::getEntrypoint(),
-				'timeout' => 2
-            ],
+            self::CLIENT_DEFAULT_OPTIONS,
             $options
 		);
 
@@ -28,8 +29,8 @@ class SumUp
 	}
 
 	static function getEntrypoint(): string
-	{
-		return self::ENTRYPOINT.self::VERSION.'/';
+    {
+        return self::CLIENT_DEFAULT_OPTIONS['base_uri'];
 	}
 }
 

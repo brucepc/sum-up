@@ -1,0 +1,4 @@
+/Application/var/cache/
+/Application/var/log/
+/Application/var/sumup.db
+/Application/var/sumup.json
