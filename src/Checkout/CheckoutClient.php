@@ -7,7 +7,7 @@ use BPCI\SumUp\Exception\InvalidCheckoutException;
 use BPCI\SumUp\OAuth\AccessToken;
 use BPCI\SumUp\SumUp;
 use BPCI\SumUp\SumUpClientInterface;
-use BPCI\SumUp\Traits\Client;
+use BPCI\SumUp\Traits\SumUpClientTrait;
 use BPCI\SumUp\Traits\ClientInterface;
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\ConnectException;
@@ -19,7 +19,7 @@ use Psr\Http\Message\ResponseInterface;
  */
 class CheckoutClient implements CheckoutClientInterface, ClientInterface
 {
-    use Client {
+    use SumUpClientTrait {
         request as protected traitRequest;
     }
 

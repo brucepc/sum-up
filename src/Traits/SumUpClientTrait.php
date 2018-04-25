@@ -8,20 +8,42 @@
 
 namespace BPCI\SumUp\Traits;
 
+use BPCI\SumUp\ContextInterface;
 use BPCI\SumUp\Exception\BadRequestException;
+use BPCI\SumUp\OAuth\AccessToken;
 use BPCI\SumUp\OAuth\AuthenticationHelper;
 use BPCI\SumUp\SumUp;
 use BPCI\SumUp\SumUpClientInterface;
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Response;
+use Psr\Http\Message\ResponseInterface;
 
 /**
- * Trait Client
+ * Trait SumUpClientTrait
  * @package BPCI\SumUp\Traits
  */
-trait Client
+trait SumUpClientTrait
 {
+    /**
+     * @var AccessToken
+     */
+    protected $token;
+    /**
+     * @var ResponseInterface
+     */
+    protected $lastResponse;
+    /**
+     * @var ContextInterface
+     */
+    protected $context;
+    /**
+     * @var array
+     */
+    protected $options;
+
     /**
      * @param string $action
      * @param mixed $object
@@ -30,7 +52,7 @@ trait Client
      * @throws BadResponseException
      * @throws ConnectException
      */
-    public function request(string $action, $object = null, string $endpoint = null):? bool
+    public function request(string $action, $object = null, string $endpoint = null): ? bool
     {
         /** @var SumUpClientInterface $this */
 
@@ -48,7 +70,7 @@ trait Client
             $options['form_params'] = $this::getBody($object, $action);
         }
 
-        $uri = $endpoint??$this->getEndPoint();
+        $uri = $endpoint ?? $this->getEndPoint();
 
         try {
             /** @var \GuzzleHttp\Psr7\Response $response */
@@ -69,5 +91,59 @@ trait Client
             return true;
         }
 
+    }
+
+    /**
+     * @return AccessToken
+     */
+    public function getToken(): ? AccessToken
+    {
+        return $this->token;
+    }
+
+    /**
+     * @param AccessToken $token
+     * @return SumUpClientInterface
+     */
+    public function setToken(AccessToken $token): SumUpClientInterface
+    {
+        $this->token = $token;
+
+        return $this;
+    }
+
+    /**
+     * @return ResponseInterface
+     */
+    public function getLastResponse(): ResponseInterface
+    {
+        return $this->lastResponse;
+    }
+
+    /**
+     * @param ResponseInterface $lastResponse
+     * @return SumUpClientInterface
+     */
+    public function setLastResponse(ResponseInterface $lastResponse): SumUpClientInterface
+    {
+        $this->lastResponse = $lastResponse;
+
+        return $this;
+    }
+
+    /**
+     * @return ContextInterface
+     */
+    public function getContext(): ContextInterface
+    {
+        return $this->context;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOptions(): array
+    {
+        return $this->options ?? [];
     }
 }

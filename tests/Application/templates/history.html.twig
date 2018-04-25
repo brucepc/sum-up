@@ -1,0 +1,33 @@
+{% extends "index.html.twig" %}
+
+{% block body %}
+<table>
+<thead>
+    <tr>
+        <th> Amount</th>
+        <th>Currency</th>
+        <th>Status</th>
+        <th>Action</th>
+    </tr>
+</thead>
+<tbody>
+{% for payment in history %}
+    <tr>
+        <td>{{payment['amount']}}</td>
+        <td>{{payment['currency']}}</td>
+        <td>
+        {% if payment['status'] is defined %}
+            {{payment['status']}}
+        {% else %}
+        {% endif %}
+        </td>
+        <td>
+        {% if payment['transaction_id'] is defined %}
+            <a href={{path('sumup_refund_transaction', {'id' : payment.transaction_code})}}>Refund</a>
+        {% endif %}
+        </td>
+    </tr>
+{% endfor %}
+</tbody>
+</table>
+{% endblock %}

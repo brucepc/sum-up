@@ -47,6 +47,7 @@
             <directory suffix="Test.php">tests/OAuth</directory>
             <directory suffix="Test.php">tests/Traits</directory>
             <directory suffix="Test.php">tests/Utils</directory>
+            <directory suffix="Test.php">tests/Transaction</directory>
             <file>tests/ContextTest.php</file>
             <file>tests/SumUpTest.php</file>
         </testsuite>

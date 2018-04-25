@@ -8,13 +8,13 @@ use BPCI\SumUp\Exception\BadRequestException;
 use BPCI\SumUp\Exception\InvalidCustomerException;
 use BPCI\SumUp\OAuth\AccessToken;
 use BPCI\SumUp\SumUpClientInterface;
-use BPCI\SumUp\Traits\Client;
+use BPCI\SumUp\Traits\SumUpClientTrait;
 use BPCI\SumUp\Traits\ClientInterface;
 use Psr\Http\Message\ResponseInterface;
 
 class CustomerClient implements CustomerClientInterface, ClientInterface
 {
-    use Client;
+    use SumUpClientTrait;
 
     const ENDPOINT = 'customers';
     protected $context;

@@ -12,6 +12,7 @@ namespace BPCI\SumUp\Tests\Checkout;
 use BPCI\SumUp\Checkout\CheckoutClient;
 use BPCI\SumUp\Checkout\CheckoutInterface;
 use BPCI\SumUp\Context;
+use BPCI\SumUp\Exception\BadRequestException;
 use BPCI\SumUp\OAuth\AccessToken;
 use BPCI\SumUp\SumUp;
 use BPCI\SumUp\Tests\Entity\Checkout;
@@ -40,6 +41,7 @@ class CheckoutClientTest extends TestCase
 
     /**
      * @cover CheckoutClient::request()
+     * @expectedException BPCI\SumUp\Exception\BadRequestException
      */
     function testCreatingANewCheckout()
     {
@@ -119,6 +121,9 @@ BODY
         $this->assertNull($client->create($checkout));
     }
 
+    /**
+     * @expectedException BPCI\SumUp\Exception\BadRequestException
+     */
     function testCompletingACheckout()
     {
         $id = uniqid();

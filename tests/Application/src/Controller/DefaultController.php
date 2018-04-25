@@ -13,6 +13,9 @@ use BPCI\SumUp\Tests\Form\CheckoutType;
 use BPCI\SumUp\Tests\Form\CustomerType;
 use BPCI\SumUp\Tests\Form\PaymentType;
 use Payum\Core\Payum;
+use Payum\Core\Request\GetHumanStatus;
+use Payum\Core\Request\Refund;
+use Payum\Core\Storage\StorageInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,7 +28,7 @@ class DefaultController extends AbstractController
 
     public function __construct()
     {
-        $this->context = Context::loadContextFromFile(\realpath(__DIR__.'/../../var/sumup.json'));
+        $this->context = Context::loadContextFromFile(\realpath(__DIR__ . '/../../var/sumup.json'));
     }
 
     public static function getSubscribedServices()
@@ -45,47 +48,65 @@ class DefaultController extends AbstractController
     {
 
         $oauthURI = AuthenticationHelper::getAuthorizationURL($this->context);
-        return $this->render('index.html.twig', [
-            'authorization_url' => $oauthURI
-        ]);
+
+        return $this->render(
+            'index.html.twig',
+            [
+                'authorization_url' => $oauthURI,
+            ]
+        );
     }
 
     /**
      * @Route("/token", name="sumup_token")
      */
-    public function token(): Response{
+    public function token(): Response
+    {
         $tokenResponse = AuthenticationHelper::getAccessToken($this->context);
-        return $this->render('token.html.twig', [
-            'accessToken' => $tokenResponse
-        ]);
+
+        return $this->render(
+            'token.html.twig',
+            [
+                'accessToken' => $tokenResponse,
+            ]
+        );
     }
 
     /**
      * @Route("/customer", name="sumup_customer")
      */
-    public function createCustomer(Request $request): Response {
+    public function createCustomer(Request $request): Response
+    {
         $customer = new Customer();
         $form = $this->createForm(CustomerType::class, $customer);
-        $form->add('save', SubmitType::class,[
-            'label' => 'Create Customer'
-        ]);
+        $form->add(
+            'save',
+            SubmitType::class,
+            [
+                'label' => 'Create Customer',
+            ]
+        );
         $form->handleRequest($request);
-        if($form->isSubmitted() && $form->isValid()){
+        if ($form->isSubmitted() && $form->isValid()) {
             $customer = $form->getData();
-            try{
+            try {
                 $token = AuthenticationHelper::getAccessToken($this->context);
                 $customerClient = new CustomerClient($this->context);
                 $customerClient->setToken($token);
                 $customer = $customerClient->create($customer);
-            } catch(BadRequestException $e) {
+            } catch (BadRequestException $e) {
                 $response = $customerClient->getLastResponse();
+
                 return new Response($response->getBody());
             }
         }
 
-        return $this->render('customerForm.html.twig', [
-            'form' => $form->createView()
-        ]);
+        return $this->render(
+            'customerForm.html.twig',
+            [
+                'form' => $form->createView(),
+            ]
+        );
     }
 
     /**
@@ -94,33 +115,41 @@ class DefaultController extends AbstractController
      * @param Request $request
      * @return Response
      */
-    function checkout(Request $request): Response{
+    public function checkout(Request $request): Response
+    {
         $form = $this->createForm(CheckoutType::class);
-        $form->add('save', SubmitType::class, [
-            'label' => 'Create Checkout'
-        ]);
+        $form->add(
+            'save',
+            SubmitType::class,
+            [
+                'label' => 'Create Checkout',
+            ]
+        );
         $form->handleRequest($request);
-        if($form->isSubmitted() && $form->isValid()){
+        if ($form->isSubmitted() && $form->isValid()) {
             $checkoutData = $form->getData();
             $client = new CheckoutClient($this->context);
-            try{
+            try {
                 $token = AuthenticationHelper::getAccessToken($this->context);
                 $checkoutData = $client->create($checkoutData, $token);
-            }catch(\Exception $e){
+            } catch (\Exception $e) {
                 return new Response($e->getMessage());
             }
         }
 
-        return $this->render('checkoutForm.html.twig', [
-        	'checkout' => $checkoutData??null,
-            'form' => $form->createView()
-        ]);
+        return $this->render(
+            'checkoutForm.html.twig',
+            [
+                'checkout' => $checkoutData ?? null,
+                'form' => $form->createView(),
+            ]
+        );
     }
 
     /**
      * @Route("new_payment", name="sumup_payum_payment")
      */
-    function payment(Request $request, Payum $payum): Response
+    public function payment(Request $request, Payum $payum): Response
     {
         $form = $this->createForm(PaymentType::class);
         $form->add(
@@ -141,7 +170,7 @@ class DefaultController extends AbstractController
             $storage = $payum->getStorage(Payment::class);
             $storage->update($payment);
             $capturaToken = $payum->getTokenFactory()
-                ->createCaptureToken($gatewayName, $payment, 'payum_authorize_do');
+                ->createCaptureToken($gatewayName, $payment, 'sumup_done_action');
 
 //            $payment =:w
 
@@ -152,9 +181,79 @@ class DefaultController extends AbstractController
         return $this->render(
             'payment.html.twig',
             [
-                'payment' => $paymentData??null,
+                'payment' => $paymentData ?? null,
                 'form' => $form->createView(),
             ]
         );
     }
+
+    /**
+     * Done after payment destination
+     *
+     * @param Request $request
+     * @return Response
+     * @Route("done_action", name="sumup_done_action")
+     */
+    public function doneAction(Request $request, Payum $payum): Response
+    {
+        $token = $payum->getHttpRequestVerifier()->verify($request);
+
+        $gateway = $payum->getGateway($token->getGatewayName());
+        $gateway->execute($status = new GetHumanStatus($token));
+        $payment = $status->getFirstModel();
+
+        return $this->render(
+            'done.html.twig',
+            [
+                'transaction' => $payment,
+            ]
+        );
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @param Request $request
+     * @param Payum $payum
+     * @return Response
+     * @Route("refund/{id}", name="sumup_refund_transaction")
+     */
+    public function refund(Request $request, Payum $payum): Response
+    {
+        /** @var StorageInterface $storage */
+        $storage = $payum->getStorage(Payment::class);
+        $payment = $storage->findBy([
+            'details' => [$request->get('id')],
+        ]);
+        $gateway = $payum->getGateway('sumup_checkout');
+        $refund = new Refund($payment);
+        $refund->setModel($payment);
+        $gateway->execute($refund);
+        $gateway->execute($status = new GetHumanStatus($payment));
+
+        return $this->render('done.html.twig',
+            [
+                'transaction' => $payment,
+            ]);
+    }
+
+    /**
+     * @param Request $request
+     * @return Response
+     * @Route("transaction_history", name="sumup_transaction_history")
+     */
+    public function history(Request $request, Payum $payum): Response
+    {
+        /** @var StorageInterface $storage */
+        $storage = $payum->getStorage(Payment::class);
+        $history = $storage->findBy([]);
+
+        return $this->render(
+            'history.html.twig',
+            [
+                'history' => $history,
+            ]
+        );
+    }
+
 }

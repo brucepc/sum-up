@@ -1,0 +1,20 @@
+{% extends 'index.html.twig' %}
+
+{% block body %}
+<table>
+<thead>
+    <tr>
+        <th>Property</th>
+        <th>Value</th>
+    </tr>
+</thead>
+<tbody>
+    {% for prop, val in transaction %}
+    <tr>
+        <td>{{ prop }}</td>
+        <td>{{ dump(val) }}</td>
+    </tr>
+    {% endfor %}
+</tbody>
+</table>
+{% endblock %}

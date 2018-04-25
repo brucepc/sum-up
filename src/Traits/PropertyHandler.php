@@ -49,7 +49,11 @@ trait PropertyHandler
 			$method = sprintf('get%s', ucfirst($prop_name));
 			$form_name = strtolower(preg_replace('/[A-Z]/', '_$0', $prop_name));
 			if($reflection->hasMethod($method)){
-				$data[$form_name] = $this->{$method}();
+				$value = $this->{$method}();
+				if($value instanceof PropertyHandlerInterface){
+				    $value = $value->getPropertyArray();
+                }
+                $data[$form_name] = $value;
 			}
 		}
 		return $data;

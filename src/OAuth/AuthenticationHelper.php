@@ -59,6 +59,7 @@ class AuthenticationHelper
      * @param array|null $scopes
      * @param array $options
      * @return \BPCI\SumUp\OAuth\AccessToken
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public static function getAccessToken(
         ContextInterface $context,

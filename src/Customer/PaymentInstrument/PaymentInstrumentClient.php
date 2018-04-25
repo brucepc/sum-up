@@ -6,14 +6,14 @@ use BPCI\SumUp\ContextInterface;
 use BPCI\SumUp\Customer\CustomerInterface;
 use BPCI\SumUp\OAuth\AccessToken;
 use BPCI\SumUp\SumUpClientInterface;
-use BPCI\SumUp\Traits\Client;
+use BPCI\SumUp\Traits\SumUpClientTrait;
 use BPCI\SumUp\Traits\ClientInterface;
 use Psr\Http\Message\ResponseInterface;
 
 
 class PaymentInstrumentClient implements PaymentInstrumentClientInterface, ClientInterface
 {
-    use Client;
+    use SumUpClientTrait;
 
     protected $context;
     protected $options = [];

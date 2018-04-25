@@ -11,12 +11,12 @@ namespace BPCI\SumUp\Payum;
 
 use BPCI\SumUp\Context;
 use BPCI\SumUp\Payum\Action\Api\CreateCheckoutAction;
-use BPCI\SumUp\Payum\Action\Api\GetOAuthTokenAction;
 use BPCI\SumUp\Payum\Action\AuthorizeAction;
 use BPCI\SumUp\Payum\Action\CaptureAction;
 use BPCI\SumUp\Payum\Action\StatusAction;
 use Payum\Core\Bridge\Spl\ArrayObject;
 use Payum\Core\GatewayFactory;
+use BPCI\SumUp\Payum\Action\Api\RefundAction;
 
 class SumUpGatewayFactory extends GatewayFactory
 {
@@ -27,14 +27,15 @@ class SumUpGatewayFactory extends GatewayFactory
                 'payum.factory_name' => 'sumup_checkout',
                 'payum.factory_title' => 'SumUp Checkout',
 
-                'payum.template.authorize_card' => '@PayumSumUp/Action/authorize_card.html.twig',
+                'payum.template.authorize' => '@PayumSumUp/Action/authorize_card.html.twig',
 
-                'payum.action.capture' => new CaptureAction(),
+                'payum.action.refund' => new RefundAction(),
                 'payum.action.status' => new StatusAction(),
-                'payum.action.create_checkout' => new CreateCheckoutAction(),
+                'payum.action.capture' => new CaptureAction(),
                 'payum.action.authorize' => function (ArrayObject $config) {
-                    return new AuthorizeAction($config['payum.template.authorize_card']);
+                    return new AuthorizeAction($config['payum.template.authorize']);
                 },
+                'payum.action.create_checkout' => new CreateCheckoutAction(),
                 'payum.required_options' => ['pay_to_email'],
             ]
         );

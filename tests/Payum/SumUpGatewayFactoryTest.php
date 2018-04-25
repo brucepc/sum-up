@@ -53,6 +53,7 @@ class SumUpGatewayFactoryTest extends TestCase
             [
                 'client_id' => 'aClientId',
                 'client_secret' => 'aSecretKey',
+                'pay_to_email' => 'teste@brucepc.com.br'
             ]
         );
 
@@ -96,13 +97,7 @@ class SumUpGatewayFactoryTest extends TestCase
         $this->assertInternalType('array', $conf);
 
         $this->assertArrayHasKey('payum.default_options', $conf);
-        $this->assertEquals(
-            [
-                'client_id' => '',
-                'client_secret' => '',
-            ],
-            $conf['payum.default_options']
-        );
+
     }
 
     public function testShouldConfigContainFactoryNameAndTitle()

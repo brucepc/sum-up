@@ -1,4 +1,5 @@
 <?php
+
 namespace BPCI\SumUp;
 
 use BPCI\SumUp\OAuth\AccessToken;
@@ -28,6 +29,7 @@ interface SumUpClientInterface
      * @param $object
      * @param string|null $type
      * @return mixed
+     * @deprecated
      */
     static function getBody($object, string $type = null);
 
@@ -68,5 +70,5 @@ interface SumUpClientInterface
     /**
      * @return AccessToken
      */
-    public function getToken():? AccessToken;
+    public function getToken(): ? AccessToken;
 }

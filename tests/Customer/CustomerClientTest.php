@@ -14,6 +14,7 @@ use BPCI\SumUp\Customer\Customer;
 use BPCI\SumUp\Customer\CustomerClient;
 use BPCI\SumUp\Customer\CustomerInterface;
 use BPCI\SumUp\Customer\PaymentInstrument\PaymentInstrument;
+use BPCI\SumUp\Exception\BadRequestException;
 use BPCI\SumUp\OAuth\AccessToken;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
@@ -99,6 +100,9 @@ JSON
 
     }
 
+    /**
+     * @expectedException BPCI\SumUp\Exception\BadRequestException
+     */
     function testGetPaymentInstruments()
     {
         $customer = clone self::$customer;
@@ -158,6 +162,9 @@ JSON
     }
 
 
+    /**
+     * @expectedException BPCI\SumUp\Exception\BadRequestException
+     */
     function testDisablePaymentInstrument()
     {
         $customer = clone self::$customer;

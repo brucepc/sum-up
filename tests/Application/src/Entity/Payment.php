@@ -28,6 +28,21 @@ class Payment extends ArrayObject
      * @var integer $id
      */
     protected $id;
+    
+    /**
+     * @var string $transactionCode
+     * @ORM\Column(name="transaction_code", type="string", nullable=true)
+     */
+    protected $transactionCode;
+
+/*    public function getId():string{
+        return $this->id;
+    }*/
+
+    public function getTransactionCode():? string{
+        return $this['transaction_code'];
+    }
+
 
 //    /**
 //     * @var string $checkoutReference
